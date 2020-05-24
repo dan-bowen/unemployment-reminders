@@ -1,0 +1,36 @@
+version: '3.7'
+
+services: # containers. same as `docker run`
+
+  api:                                # a friendly name. this is also a DNS name inside network
+    build:                            # Optional, build context for `docker build`
+      context: ./services/api
+    image: reminders-api:latest       # Optional, if you use `build` this will be the name of the built image
+    environment:
+      #########
+      # Flask #
+      #########
+      FLASK_ENV: dev
+      FLASK_DEBUG: 1
+
+      ###########
+      # Secrets #
+      ###########
+      SECRETS_MANAGER_SECRET_ARN:
+
+      #######
+      # AWS #
+      #######
+      AWS_PROFILE: personal_crucial_dev
+    ports:                            # Optional, same as -p in `docker container run`
+      - '5000:5000'
+    volumes:                          # Optional, same as -v in `docker container run`
+      - ./services/api:/usr/local/src/reminders
+      - /usr/local/src/reminders/node_modules/
+      - ~/.aws:/root/.aws
+    networks:
+      - frontend
+
+networks:                             # Optional, same as `docker network create`
+  frontend:
+    driver: bridge

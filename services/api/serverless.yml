@@ -1,0 +1,69 @@
+# For full config options, check the docs:
+#    docs.serverless.com
+
+service: api
+# app and org for use with dashboard.serverless.com
+app: unemployment-reminders
+org: dbowen
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, self:custom.defaultStage}
+  profile: ${self:custom.stage_vars.${self:provider.stage}.aws_profile}
+  deploymentBucket:
+    maxPreviousDeploymentArtifacts: 10 # On every deployment the framework prunes the bucket to remove artifacts older than this limit. The default is 5
+    blockPublicAccess: true # Prevents public access via ACLs or bucket policies. Default is false
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
+
+custom:
+  defaultStage: dev
+  stage_vars:
+    dev:
+      aws_profile: personal_crucial_dev
+    stage:
+      aws_profile:
+    prod:
+      aws_profile:
+  # WSGI Plugin: https://github.com/logandk/serverless-wsgi
+  wsgi:
+    app: api/wsgi.app
+    pythonBin: python3
+    packRequirements: false
+  # Python requirements Plugin: https://github.com/UnitedIncome/serverless-python-requirements
+#  pythonRequirements:
+#    dockerizePip: true
+
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+
+package:
+  individually: false
+  include:
+    - '!./**'
+    - 'api/**'
+  exclude:
+    - '**'
+
+functions:
+  api:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
+    timeout: 6
+    memorySize: 1024
+    environment:
+      FLASK_ENV: ${self:provider.stage}
+      SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
+      # Tell wsgi handler about our basepath. Required in conjunction with serverless-domain-manager plugin.
+      API_GATEWAY_BASE_PATH: ${self:provider.stage}
