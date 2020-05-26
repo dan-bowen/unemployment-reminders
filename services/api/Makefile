@@ -12,7 +12,7 @@ help:
 
 test: ## Run unit tests
 	@docker-compose exec api bash -c \
-	    'cd test/ && FLASK_ENV=test nose2'
+	    'FLASK_ENV="test" SECRET_KEY="" nose2 -v'
 
 lint: ## Lint python files
 	@docker-compose exec api bash -c \
