@@ -22,9 +22,11 @@ class Secrets:
             raise e
 
         self.SECRET_KEY = secrets_from_schema['SECRET_KEY']
+        self.TWILIO_AUTH_TOKEN = secrets_from_schema['TWILIO_AUTH_TOKEN']
 
     class ExpectedSecretsSchema(marshmallow.Schema):
         SECRET_KEY = marshmallow.fields.String(required=True)
+        TWILIO_AUTH_TOKEN = marshmallow.fields.String(required=True)
 
 
 class SecretsFromEnv:
@@ -35,7 +37,8 @@ class SecretsFromEnv:
 
     def __init__(self):
         self._data = dict(
-            SECRET_KEY=os.getenv('SECRET_KEY')
+            SECRET_KEY=os.getenv('SECRET_KEY'),
+            TWILIO_AUTH_TOKEN=os.getenv('TWILIO_AUTH_TOKEN')
         )
 
     def get_secrets(self):
@@ -119,7 +122,7 @@ class BaseConfig:
         #####################
         # APP configuration #
         #####################
-        self.SECRETS = Secrets(dict(SECRET_KEY=''))
+        self.SECRETS = Secrets(dict(SECRET_KEY='', TWILIO_AUTH_TOKEN=''))
         self.BASE_DIR = basedir
 
         #######################
