@@ -21,3 +21,6 @@ stop: ## Stop the containers
 
 ssh-api: ## SSH to the api container
 	@docker-compose exec api bash
+
+ngrok: ## API site over NGROK.
+	@ngrok http -host-header=rewrite -subdomain=unemployment-reminders localhost:5000
