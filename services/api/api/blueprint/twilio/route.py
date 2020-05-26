@@ -1,8 +1,6 @@
-import json
-from datetime import datetime, timedelta
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from lib.collect import CollectCertificationDate
-from lib.twilio import validate_twilio_request
+from lib.twilio import validate_twilio_request, TwilioBot
 
 blueprint = Blueprint('twilio', __name__)
 
@@ -21,3 +19,11 @@ def validate_certification_date():
     is_valid = CollectCertificationDate(form_post['CurrentInput']).is_valid
 
     return {'valid': is_valid}
+
+
+@blueprint.route('/twilio/collect', methods=['POST'])
+def collect():
+    bot = TwilioBot()
+    bot.collect_certification_date(request.form)
+
+    return bot.say_thanks()
