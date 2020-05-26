@@ -12,3 +12,12 @@ blueprint = Blueprint('twilio', __name__)
 def ping():
     """Simple route for testing Twilio request validation"""
     return {'hello': 'world'}
+
+
+@blueprint.route('/twilio/validate-certification-date', methods=['POST'])
+@validate_twilio_request
+def validate_certification_date():
+    form_post = request.form
+    is_valid = CollectCertificationDate(form_post['CurrentInput']).is_valid
+
+    return {'valid': is_valid}
