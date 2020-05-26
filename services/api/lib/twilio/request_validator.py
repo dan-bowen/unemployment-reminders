@@ -5,6 +5,7 @@ from lib.twilio import TwilioClient
 
 def validate_twilio_request(f):
     """Validates that incoming requests genuinely originated from Twilio"""
+    # Adapted from https://www.twilio.com/docs/usage/tutorials/how-to-secure-your-flask-app-by-validating-incoming-twilio-requests?code-sample=code-custom-decorator-for-flask-apps-to-validate-twilio-requests-3&code-language=Python&code-sdk-version=6.x
     @wraps(f)
     def decorated_function(*args, **kwargs):
         twilio_client = TwilioClient(current_app)
