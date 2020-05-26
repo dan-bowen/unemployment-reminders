@@ -4,7 +4,7 @@ import helpers
 from lib.twilio import TwilioBot
 
 
-class TwilioCollectorTests(unittest.TestCase):
+class BotCollectorTests(unittest.TestCase):
 
     def setUp(self):
         self.helper = helpers.Helper()
@@ -12,22 +12,30 @@ class TwilioCollectorTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_valid_certification_date(self):
-        path = '/twilio/validate-certification-date'
+    def test_validate_certification_date(self):
+        # valid response
+        path = '/bot/validate-certification-date'
         params = {'CurrentInput': 'next monday'}
         response = self.helper.twilio_request('POST', path, params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'valid': True})
 
-    def test_invalid_certification_date(self):
-        path = '/twilio/validate-certification-date'
+        # invalid response
+        path = '/bot/validate-certification-date'
         params = {'CurrentInput': 'this is not a valid response'}
         response = self.helper.twilio_request('POST', path, params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'valid': False})
 
-    def test_finalize_collector(self):
-        path = '/twilio/collect'
+    def test_ask_certification_date(self):
+        path = '/bot/ask-certification-date'
+        bot = TwilioBot()
+        response = self.helper.twilio_request('GET', path, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, bot.ask_certification_date())
+
+    def test_say_thanks(self):
+        path = '/bot/say-thanks'
         params = {
             'Memory': json.dumps({
                 'twilio': {
@@ -44,12 +52,12 @@ class TwilioCollectorTests(unittest.TestCase):
             })
         }
 
-        twilio_bot = TwilioBot()
-        twilio_bot.collect_certification_date(params)
+        bot = TwilioBot()
+        bot.collect_certification_date(params)
 
         response = self.helper.twilio_request('POST', path, params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json, twilio_bot.say_thanks())
+        self.assertEqual(response.json, bot.say_thanks())
 
 
 if __name__ == "__main__":

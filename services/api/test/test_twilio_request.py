@@ -10,15 +10,15 @@ class TwilioTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_allow_twilio_request(self):
-        path = '/twilio/ping'
+    def test_validate_twilio_request(self):
+        path = '/bot/ping'
         params = {}
+
+        # valid request
         response = self.helper.twilio_request('POST', path, params)
         self.assertEqual(response.status_code, 200)
 
-    def test_deny_twilio_request(self):
-        path = '/twilio/ping'
-        params = {}
+        # invalid request
         response = self.helper.twilio_request('POST', path, params, valid=False)
         self.assertEqual(response.status_code, 403)
 

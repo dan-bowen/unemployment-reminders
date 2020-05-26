@@ -5,14 +5,14 @@ from lib.twilio import validate_twilio_request, TwilioBot
 blueprint = Blueprint('twilio', __name__)
 
 
-@blueprint.route('/twilio/ping', methods=['POST'])
+@blueprint.route('/bot/ping', methods=['POST'])
 @validate_twilio_request
 def ping():
     """Simple route for testing Twilio request validation"""
     return {'hello': 'world'}
 
 
-@blueprint.route('/twilio/validate-certification-date', methods=['POST'])
+@blueprint.route('/bot/validate-certification-date', methods=['POST'])
 @validate_twilio_request
 def validate_certification_date():
     form_post = request.form
@@ -21,7 +21,7 @@ def validate_certification_date():
     return {'valid': is_valid}
 
 
-@blueprint.route('/twilio/collect', methods=['POST'])
+@blueprint.route('/bot/say-thanks', methods=['POST'])
 def collect():
     bot = TwilioBot()
     bot.collect_certification_date(request.form)
