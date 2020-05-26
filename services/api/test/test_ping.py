@@ -2,7 +2,7 @@ import unittest
 import helpers
 
 
-class RegisterTests(unittest.TestCase):
+class PingTests(unittest.TestCase):
 
     def setUp(self):
         helper = helpers.Helper()
