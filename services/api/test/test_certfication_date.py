@@ -17,14 +17,15 @@ class CertificationDateTests(unittest.TestCase):
 
         # invalid
         for response in ('moday', 'this is wrong'):
-            self.assertFalse(CollectCertificationDate(response).is_valid)
+            cert_date = CollectCertificationDate(response)
+            self.assertFalse(cert_date.is_valid)
 
             # throw exception when accessing properties on invalid collector
             with self.assertRaises(CollectException):
-                CollectCertificationDate(response).sequence
+                sequence = cert_date.sequence
 
             with self.assertRaises(CollectException):
-                CollectCertificationDate(response).day_of_week
+                dow = cert_date.day_of_week
 
     def test_get_sequence(self):
         self.assertEqual(CollectCertificationDate('monday').sequence, 0)
