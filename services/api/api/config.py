@@ -119,18 +119,18 @@ class BaseConfig:
     """
 
     def __init__(self):
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(dict(SECRET_KEY='', TWILIO_AUTH_TOKEN=''))
-        self.BASE_DIR = basedir
-
         #########
         # FLASK #
         #########
         self.DEBUG = False
         self.TESTING = False
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
+
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(dict(SECRET_KEY='', TWILIO_AUTH_TOKEN=''))
+        self.BASE_DIR = basedir
 
 
 class DevConfig(BaseConfig):
@@ -139,18 +139,18 @@ class DevConfig(BaseConfig):
     def __init__(self):
         super().__init__()
 
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
-        self.BASE_DIR = basedir
-
         #########
         # FLASK #
         #########
         self.DEBUG = True
         self.TESTING = False
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
+
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
+        self.BASE_DIR = basedir
 
 
 class StageConfig(BaseConfig):
@@ -159,18 +159,18 @@ class StageConfig(BaseConfig):
     def __init__(self):
         super().__init__()
 
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
-        self.BASE_DIR = basedir
-
         #########
         # FLASK #
         #########
         self.DEBUG = False
         self.TESTING = False
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
+
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
+        self.BASE_DIR = basedir
 
 
 class TestConfig(BaseConfig):
@@ -179,18 +179,18 @@ class TestConfig(BaseConfig):
     def __init__(self):
         super().__init__()
 
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
-        self.BASE_DIR = basedir
-
         #########
         # FLASK #
         #########
         self.DEBUG = False
         self.TESTING = True
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
+
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
+        self.BASE_DIR = basedir
 
 
 def get_config():
