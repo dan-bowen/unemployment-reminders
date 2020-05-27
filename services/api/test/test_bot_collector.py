@@ -28,9 +28,8 @@ class BotCollectorTests(unittest.TestCase):
         self.assertEqual(response.json, {'valid': False})
 
     def test_ask_certification_date(self):
-        path = '/bot/ask-certification-date'
         bot = TwilioBot()
-        response = self.helper.twilio_request('GET', path, {})
+        response = self.helper.twilio_request('POST', '/bot/ask-certification-date', {})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, bot.ask_certification_date())
 
