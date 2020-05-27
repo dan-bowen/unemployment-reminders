@@ -119,13 +119,6 @@ class BaseConfig:
     """
 
     def __init__(self):
-        #########
-        # FLASK #
-        #########
-        self.DEBUG = False
-        self.TESTING = False
-        self.SECRET_KEY = self.SECRETS.SECRET_KEY
-
         #######
         # APP #
         #######
@@ -133,12 +126,25 @@ class BaseConfig:
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
 
+        #########
+        # FLASK #
+        #########
+        self.DEBUG = False
+        self.TESTING = False
+        self.SECRET_KEY = self.SECRETS.SECRET_KEY
+
 
 class DevConfig(BaseConfig):
     """Dev configuration."""
 
     def __init__(self):
         super().__init__()
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
+        self.BASE_DIR = basedir
+        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
 
         #########
         # FLASK #
@@ -147,19 +153,18 @@ class DevConfig(BaseConfig):
         self.TESTING = False
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
 
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
-        self.BASE_DIR = basedir
-        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
-
 
 class StageConfig(BaseConfig):
     """Stage configuration."""
 
     def __init__(self):
         super().__init__()
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
+        self.BASE_DIR = basedir
+        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
 
         #########
         # FLASK #
@@ -168,19 +173,17 @@ class StageConfig(BaseConfig):
         self.TESTING = False
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
 
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
-        self.BASE_DIR = basedir
-        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
-
 
 class TestConfig(BaseConfig):
     """Test configuration."""
 
     def __init__(self):
         super().__init__()
+        #######
+        # APP #
+        #######
+        self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
+        self.BASE_DIR = basedir
 
         #########
         # FLASK #
@@ -188,12 +191,6 @@ class TestConfig(BaseConfig):
         self.DEBUG = False
         self.TESTING = True
         self.SECRET_KEY = self.SECRETS.SECRET_KEY
-
-        #######
-        # APP #
-        #######
-        self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
-        self.BASE_DIR = basedir
 
 
 def get_config():
