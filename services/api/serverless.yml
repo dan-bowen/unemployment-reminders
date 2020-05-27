@@ -29,10 +29,13 @@ custom:
   stage_vars:
     dev:
       aws_profile: personal_crucial_dev
+      bot_base_url: ''
     stage:
-      aws_profile:
+      aws_profile: ''
+      bot_base_url: ''
     prod:
-      aws_profile:
+      aws_profile: ''
+      bot_base_url: ''
   # WSGI Plugin: https://github.com/logandk/serverless-wsgi
   wsgi:
     app: api/wsgi.app
@@ -65,5 +68,6 @@ functions:
     environment:
       FLASK_ENV: ${self:provider.stage}
       SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
+      BOT_BASE_URL: ${self:custom.stage_vars.${self:provider.stage}.bot_base_url}
       # Tell wsgi handler about our basepath. Required in conjunction with serverless-domain-manager plugin.
       API_GATEWAY_BASE_PATH: ${self:provider.stage}

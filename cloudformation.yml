@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Stack for unemployment reminders app
+Description: Base stack for unemployment reminders app
 Parameters:
   ApplicationEnv:
     Type: String
