@@ -6,22 +6,8 @@ services: # containers. same as `docker run`
     build:                            # Optional, build context for `docker build`
       context: ./services/api
     image: reminders-api:latest       # Optional, if you use `build` this will be the name of the built image
-    environment:
-      #########
-      # Flask #
-      #########
-      FLASK_ENV: dev
-      FLASK_DEBUG: 1
-
-      ###########
-      # Secrets #
-      ###########
-      SECRETS_MANAGER_SECRET_ARN:
-
-      #######
-      # AWS #
-      #######
-      AWS_PROFILE: personal_crucial_dev
+    env_file:
+      - ./services/api/.env
     ports:                            # Optional, same as -p in `docker container run`
       - '5000:5000'
     volumes:                          # Optional, same as -v in `docker container run`
