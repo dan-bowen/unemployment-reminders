@@ -2,7 +2,8 @@ import json
 
 
 class TwilioBot:
-    def __init__(self):
+    def __init__(self, base_url=None):
+        self.base_url = base_url
         self.collected_certification_date = None
 
     def ask_certification_date(self):
@@ -25,7 +26,7 @@ class TwilioBot:
                                     },
                                     "webhook":      {
                                         "method": "POST",
-                                        "url":    "http://unemployment-reminders.ngrok.io/bot/validate-certification-date"
+                                        "url":    f"{self.base_url}/bot/validate-certification-date"
                                     },
                                     "max_attempts": {
                                         "redirect":     "task://having_trouble",
@@ -35,7 +36,7 @@ class TwilioBot:
                             }
                         ],
                         "on_complete": {
-                            "redirect": "http://unemployment-reminders.ngrok.io/bot/say-thanks"
+                            "redirect": f"{self.base_url}/bot/say-thanks"
                         }
                     }
                 }

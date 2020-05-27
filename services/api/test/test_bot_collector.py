@@ -8,6 +8,7 @@ class BotCollectorTests(unittest.TestCase):
 
     def setUp(self):
         self.helper = helpers.Helper()
+        self.bot = TwilioBot(base_url=self.helper.app.config['BOT_BASE_URL'])
 
     def tearDown(self):
         pass
@@ -28,10 +29,9 @@ class BotCollectorTests(unittest.TestCase):
         self.assertEqual(response.json, {'valid': False})
 
     def test_ask_certification_date(self):
-        bot = TwilioBot()
         response = self.helper.twilio_request('POST', '/bot/ask-certification-date', {})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json, bot.ask_certification_date())
+        self.assertEqual(response.json, self.bot.ask_certification_date())
 
     def test_say_thanks(self):
         path = '/bot/say-thanks'
@@ -51,12 +51,11 @@ class BotCollectorTests(unittest.TestCase):
             })
         }
 
-        bot = TwilioBot()
-        bot.collect_certification_date(params)
+        self.bot.collect_certification_date(params)
 
         response = self.helper.twilio_request('POST', path, params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json, bot.say_thanks())
+        self.assertEqual(response.json, self.bot.say_thanks())
 
 
 if __name__ == "__main__":

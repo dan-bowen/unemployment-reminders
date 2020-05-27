@@ -1,4 +1,3 @@
-import urllib
 from twilio.request_validator import RequestValidator
 
 
