@@ -131,6 +131,7 @@ class BaseConfig:
         #######
         self.SECRETS = Secrets(dict(SECRET_KEY='', TWILIO_AUTH_TOKEN=''))
         self.BASE_DIR = basedir
+        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
 
 
 class DevConfig(BaseConfig):
@@ -151,6 +152,7 @@ class DevConfig(BaseConfig):
         #######
         self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
         self.BASE_DIR = basedir
+        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
 
 
 class StageConfig(BaseConfig):
@@ -171,6 +173,7 @@ class StageConfig(BaseConfig):
         #######
         self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
         self.BASE_DIR = basedir
+        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
 
 
 class TestConfig(BaseConfig):
