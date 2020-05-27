@@ -13,11 +13,8 @@ class TwilioClient:
     def init_app(self, app):
         self.request_validator = RequestValidator(app.config['SECRETS'].TWILIO_AUTH_TOKEN)
 
-    def compute_signature(self, method, uri, params):
+    def compute_signature(self, uri, params):
         """proxy twilio.RequestValidator.compute_signature()"""
-        if method == "GET":
-            uri = uri + '?' + urllib.parse.urlencode(params)
-            params = {}
         return self.request_validator.compute_signature(uri, params)
 
     def validate_request(self, uri, params, signature):
