@@ -14,7 +14,8 @@ jobs:
         command: |
           sudo pip3 install requirements.txt
           sudo pip3 install requirements-dev.txt
-    - run: |
-        nose2 -v
+    - run:
+        command: |
+          nose2 -v
     - store_test_results:
         path: test-results
