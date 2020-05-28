@@ -44,6 +44,7 @@ class TwilioBot:
         }
 
     def collect_certification_date(self, params):
+        """Collects certification date from Twilio POST"""
         memory = json.loads(params.get('Memory'))
         answers = memory['twilio']['collected_data']['next_certification_date']['answers']
         next_certification_date = answers['next_certification_date']['answer']

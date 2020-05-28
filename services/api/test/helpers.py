@@ -6,7 +6,7 @@ class Helper:
     def __init__(self):
         self.app = create_app()
         self.client = self.app.test_client()
-        self.twilio_client = TwilioClient(self.app)
+        self.twilio_client = TwilioClient(self.app.config['SECRETS'].TWILIO_AUTH_TOKEN)
 
     def twilio_request(self, method, path, params, valid=True):
         """
