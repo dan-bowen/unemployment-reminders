@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    working_directory: ./services/api
+    docker:
+      - image: circleci/python:3.7.4
+        environment:
+          FLASK_ENV: test
+          SECRET_KEY: ""
+          TWILIO_AUTH_TOKEN: ""
+  steps:
+    - checkout
+    - run:
+        command: |
+          sudo pip3 install requirements.txt
+          sudo pip3 install requirements-dev.txt
+    - run: |
+        nose2 -v
+    - store_test_results:
+        path: test-results
