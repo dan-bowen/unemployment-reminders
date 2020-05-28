@@ -1,7 +1,11 @@
 version: 2
 jobs:
-  build:
-    working_directory: ./services/api
+  checkout:
+    working_directory: ~/unemployment-reminders
+    steps:
+      - checkout
+  test:
+    working_directory: ~/unemployment-reminders/services/api
     docker:
       - image: circleci/python:3.7.4
         environment:
@@ -9,7 +13,6 @@ jobs:
           SECRET_KEY: ""
           TWILIO_AUTH_TOKEN: ""
     steps:
-      - checkout
       - run:
           command: |
             sudo pip3 install requirements.txt
