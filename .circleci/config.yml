@@ -8,14 +8,14 @@ jobs:
           FLASK_ENV: test
           SECRET_KEY: ""
           TWILIO_AUTH_TOKEN: ""
-  steps:
-    - checkout
-    - run:
-        command: |
-          sudo pip3 install requirements.txt
-          sudo pip3 install requirements-dev.txt
-    - run:
-        command: |
-          nose2 -v
-    - store_test_results:
-        path: test-results
+    steps:
+      - checkout
+      - run:
+          command: |
+            sudo pip3 install requirements.txt
+            sudo pip3 install requirements-dev.txt
+      - run:
+          command: |
+            nose2 -v
+      - store_test_results:
+          path: test-results
