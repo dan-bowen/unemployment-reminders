@@ -1,5 +1,5 @@
-from api.repo import ping as PingRepo
-from flask import Blueprint
+from api.repo import RemindersRepo
+from flask import Blueprint, current_app
 import requests
 
 blueprint = Blueprint('ping', __name__)
@@ -16,7 +16,7 @@ def ping_detail():
         external_http_result = 'timeout'
 
     try:
-        r = PingRepo.ping_db()
+        r = RemindersRepo(current_app).count_items()
         db_access_result = 'success'
     except Exception as e:
         db_access_result = 'exception'

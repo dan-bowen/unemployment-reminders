@@ -14,18 +14,18 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && \
     sudo apt-get install -y nodejs
 
 # Install local NPM dependencies
-COPY package.json ./
+COPY package.json .
 RUN npm install
 
 # Install serverless
 RUN npm install -g serverless
 
 # Install core dependencies
-COPY requirements.txt ./
+COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
 # Install Dev dependencies
-COPY requirements-dev.txt ./
+COPY requirements-dev.txt .
 RUN pip3 install -r requirements-dev.txt
 
 ENV FLASK_APP=api

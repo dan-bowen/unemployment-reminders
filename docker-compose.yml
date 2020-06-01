@@ -5,7 +5,7 @@ services: # containers. same as `docker run`
   api:                                # a friendly name. this is also a DNS name inside network
     build:                            # Optional, build context for `docker build`
       context: ./services/api
-    image: reminders-api:latest       # Optional, if you use `build` this will be the name of the built image
+    image: unemployment-reminders-api:latest       # Optional, if you use `build` this will be the name of the built image
     env_file:
       - ./services/api/.env
     ports:                            # Optional, same as -p in `docker container run`
@@ -16,7 +16,20 @@ services: # containers. same as `docker run`
       - ~/.aws:/root/.aws
     networks:
       - frontend
+      - backend
+
+  dynamodb:
+    # https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.UsageNotes.html
+    # https://github.com/99xt/serverless-dynamodb-local/issues/57#issuecomment-609098256
+    image: 'amazon/dynamodb-local'
+    ports:
+      - '8000:8000'
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    networks:
+      - backend
 
 networks:                             # Optional, same as `docker network create`
   frontend:
+    driver: bridge
+  backend:
     driver: bridge

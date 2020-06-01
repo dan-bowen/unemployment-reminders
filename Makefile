@@ -24,3 +24,6 @@ ssh-api: ## SSH to the api container
 
 ngrok: ## API site over NGROK.
 	@ngrok http -host-header=rewrite -subdomain=unemployment-reminders localhost:5000
+
+migrate: ## Performe the initial migration
+	@docker-compose exec api sls dynamodb migrate
