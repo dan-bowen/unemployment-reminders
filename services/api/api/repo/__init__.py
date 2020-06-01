@@ -1,1 +1,1 @@
-from .ping import PingRepo
+from .reminders import RemindersRepo
