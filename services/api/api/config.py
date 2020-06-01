@@ -125,6 +125,7 @@ class BaseConfig:
         self.SECRETS = Secrets(dict(SECRET_KEY='', TWILIO_AUTH_TOKEN=''))
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.DYNAMODB_ENDPOINT = None
 
         #########
         # FLASK #
@@ -145,6 +146,7 @@ class DevConfig(BaseConfig):
         self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.DYNAMODB_ENDPOINT = os.getenv('DYNAMODB_ENDPOINT')
 
         #########
         # FLASK #
@@ -165,6 +167,7 @@ class StageConfig(BaseConfig):
         self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.DYNAMODB_ENDPOINT = None
 
         #########
         # FLASK #
@@ -184,6 +187,8 @@ class TestConfig(BaseConfig):
         #######
         self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
         self.BASE_DIR = basedir
+        # self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.DYNAMODB_ENDPOINT = None
 
         #########
         # FLASK #
