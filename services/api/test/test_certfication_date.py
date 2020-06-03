@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from lib.collect import CollectCertificationDate, CollectException
 
 
@@ -35,6 +36,56 @@ class CertificationDateTests(unittest.TestCase):
         for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday',
                     'MoNdaY', 'TueSdaY', 'WednEsdaY', 'ThurSdaY', 'FriDaY'):
             self.assertEqual(CollectCertificationDate(day).day_of_week, day.lower())
+
+    def test_next_alert_this_weekday(self):
+        cert_date = CollectCertificationDate('monday', timezone='America/Chicago', alert_time='10:30:00')
+
+        # monday, June 1
+        local_now = datetime.fromisoformat('2020-06-01T10:00:00-05:00')
+        actual = cert_date.next_alert_at(local_now)
+        # monday, June 8
+        expected = datetime.fromisoformat('2020-06-08T15:30:00+00:00')
+        self.assertEqual(actual, expected)
+
+        # tuesday, June 2
+        local_now = datetime.fromisoformat('2020-06-02T10:00:00-05:00')
+        actual = cert_date.next_alert_at(local_now)
+        # monday, June 8
+        expected = datetime.fromisoformat('2020-06-08T15:30:00+00:00')
+        self.assertEqual(actual, expected)
+
+        # monday, June 8
+        local_now = datetime.fromisoformat('2020-06-08T10:00:00-05:00')
+        actual = cert_date.next_alert_at(local_now)
+        # monday, June 15
+        expected = datetime.fromisoformat('2020-06-15T15:30:00+00:00')
+        self.assertEqual(actual, expected)
+
+    def test_next_alert_next_weekday(self):
+        cert_date = CollectCertificationDate('next monday', timezone='America/Chicago', alert_time='10:30:00')
+
+        # monday, June 1
+        local_now = datetime.fromisoformat('2020-06-01T10:00:00-05:00')
+        # print(local_now.isoformat())
+        actual = cert_date.next_alert_at(local_now)
+        # monday, June 15
+        expected = datetime.fromisoformat('2020-06-15T15:30:00+00:00')
+        # print(expected.isoformat())
+        self.assertEqual(actual, expected)
+
+        # tuesday, June 2
+        local_now = datetime.fromisoformat('2020-06-02T10:00:00-05:00')
+        actual = cert_date.next_alert_at(local_now)
+        # monday, June 15
+        expected = datetime.fromisoformat('2020-06-15T15:30:00+00:00')
+        self.assertEqual(actual, expected)
+
+        # monday, June 8
+        local_now = datetime.fromisoformat('2020-06-08T10:00:00-05:00')
+        actual = cert_date.next_alert_at(local_now)
+        # monday, June 22
+        expected = datetime.fromisoformat('2020-06-22T15:30:00+00:00')
+        self.assertEqual(actual, expected)
 
 
 if __name__ == "__main__":
