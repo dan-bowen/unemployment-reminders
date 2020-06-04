@@ -3,7 +3,7 @@ from datetime import datetime
 from lib.collect import CollectCertificationDate, CollectException
 
 
-class CertificationDateTests(unittest.TestCase):
+class NextAlertTests(unittest.TestCase):
 
     def setUp(self):
         pass
