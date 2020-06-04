@@ -1,2 +1,2 @@
-from .certification_date import CollectCertificationDate
+from .next_alert import CollectNextAlert
 from .exceptions import CollectException

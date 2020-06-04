@@ -1,5 +1,5 @@
 from flask import Blueprint, request, current_app
-from lib.collect import CollectCertificationDate
+from lib.collect import CollectNextAlert
 from lib.twilio import validate_twilio_request, TwilioBot
 
 blueprint = Blueprint('twilio', __name__)
@@ -23,7 +23,7 @@ def ask_certification_date():
 @validate_twilio_request
 def validate_certification_date():
     form_post = request.form
-    is_valid = CollectCertificationDate(form_post['CurrentInput']).is_valid
+    is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
 
     return {'valid': is_valid}
 

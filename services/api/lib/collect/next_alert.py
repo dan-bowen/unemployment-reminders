@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR
 from .exceptions import CollectException
 
 
-class CollectCertificationDate:
+class CollectNextAlert:
     """
     Collects certification date from user and calculates next alert date.
     """
