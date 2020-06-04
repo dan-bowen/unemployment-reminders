@@ -4,7 +4,7 @@ Main application package.
 
 from flask import Flask
 from .config import get_config
-from .extension import twilio_bot, dynamo_client
+from .extension import dynamo_client
 from .blueprint import ping, twilio
 
 
@@ -37,7 +37,6 @@ def register_extensions(app):
     :param app:
     :return:
     """
-    twilio_bot.init_app(app)
     dynamo_client.init_app(app)
 
 
