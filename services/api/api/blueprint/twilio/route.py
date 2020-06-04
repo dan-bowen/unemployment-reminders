@@ -15,7 +15,7 @@ def ping():
 @validate_twilio_request
 def ask_certification_date():
     twilio_bot = TwilioBot(current_app)
-    return twilio_bot.ask_certification_date()
+    return twilio_bot.ask_next_alert()
 
 
 @blueprint.route('/bot/validate-certification-date', methods=['POST'])
@@ -29,5 +29,6 @@ def validate_certification_date():
 @validate_twilio_request
 def collect():
     twilio_bot = TwilioBot(current_app)
-    twilio_bot.collect_certification_date(request.form)
+    twilio_bot.collect_next_alert(request.form)
+
     return twilio_bot.say_thanks()

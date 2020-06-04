@@ -1,12 +1,15 @@
 import json
 from lib.collect import CollectNextAlert
+from api.repo import AlertsRepo
 
 
 class TwilioBot:
     def __init__(self, app=None):
         self.app = app
+        self.alerts_repo = AlertsRepo()
+
         self.base_url = None
-        self.collected_certification_date = None
+        self.collected_next_alert = None
 
         if app is not None:
             self.init_app(app)
@@ -14,7 +17,7 @@ class TwilioBot:
     def init_app(self, app):
         self.base_url = app.config['BOT_BASE_URL']
 
-    def ask_certification_date(self):
+    def ask_next_alert(self):
         return {
             "actions": [
                 {
@@ -51,21 +54,23 @@ class TwilioBot:
             ]
         }
 
-    def collect_certification_date(self, params):
+    def collect_next_alert(self, form_post):
         """Collects certification date from Twilio POST"""
-        memory = json.loads(params.get('Memory'))
+        memory = json.loads(form_post.get('Memory'))
         answers = memory['twilio']['collected_data']['next_certification_date']['answers']
-        next_certification_date = answers['next_certification_date']['answer']
 
-        self.collected_certification_date = next_certification_date
+        self.collected_next_alert = answers['next_certification_date']['answer']
 
     def validate_next_alert(self, form_post):
         is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
         return {'valid': is_valid}
 
+    def subscribe(self, alert_model):
+        self.alerts_repo.create_alert(alert_model)
+
     def say_thanks(self):
         message = (
-            f'Okay great. I\'ll remind you on {self.collected_certification_date} and every two weeks after that.'
+            f'Okay great. I\'ll remind you on {self.collected_next_alert} and every two weeks after that.'
             f' Thanks for using my app.'
         )
         return {
