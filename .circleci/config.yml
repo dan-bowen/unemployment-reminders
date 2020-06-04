@@ -8,6 +8,7 @@ jobs:
           FLASK_ENV: test
           SECRET_KEY: ""
           TWILIO_AUTH_TOKEN: ""
+          DYNAMODB_ENDPOINT: "http://localhost:8000"
     steps:
       - checkout
       - run:
