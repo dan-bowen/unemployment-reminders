@@ -1,9 +1,10 @@
-from lib.dynamo.client import DynamoClient
+from api.extension import dynamo_client
+from api.schema.alert import AlertSchema
 
 
-class RemindersRepo:
-    def __init__(self, app):
-        self.dynamo = DynamoClient(endpoint_url=app.config['DYNAMODB_ENDPOINT'])
+class AlertsRepo:
+    def __init__(self):
+        pass
 
     def count_items(self):
         """
@@ -14,4 +15,10 @@ class RemindersRepo:
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.Client.describe_table
         """
 
-        return self.dynamo.table_reminders.item_count
+        return dynamo_client.alerts_table.item_count
+
+    def create_alert(self, alert_model):
+        response = dynamo_client.alerts_table.put_item(
+            Item=AlertSchema().dump(alert_model)
+        )
+        return response

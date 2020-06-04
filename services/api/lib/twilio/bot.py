@@ -1,6 +1,5 @@
 import json
 from lib.collect import CollectNextAlert
-from api.repo import RemindersRepo
 
 
 class TwilioBot:
@@ -63,9 +62,6 @@ class TwilioBot:
     def validate_next_alert(self, form_post):
         is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
         return {'valid': is_valid}
-
-    def subscribe(self, alert_model):
-        pass
 
     def say_thanks(self):
         message = (
