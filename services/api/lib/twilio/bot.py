@@ -4,9 +4,16 @@ from api.repo import RemindersRepo
 
 
 class TwilioBot:
-    def __init__(self, base_url=None):
-        self.base_url = base_url
+    def __init__(self, app=None):
+        self.app = app
+        self.base_url = None
         self.collected_certification_date = None
+
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        self.base_url = app.config['BOT_BASE_URL']
 
     def ask_certification_date(self):
         return {

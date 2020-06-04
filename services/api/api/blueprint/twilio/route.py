@@ -1,5 +1,6 @@
 from flask import Blueprint, request, current_app
-from lib.twilio import validate_twilio_request, TwilioBot
+from api.extension import twilio_bot
+from lib.twilio import validate_twilio_request
 
 blueprint = Blueprint('twilio', __name__)
 
@@ -14,21 +15,20 @@ def ping():
 @blueprint.route('/bot/ask-certification-date', methods=['POST'])
 @validate_twilio_request
 def ask_certification_date():
-    bot = TwilioBot(base_url=current_app.config['BOT_BASE_URL'])
-    return bot.ask_certification_date()
+    return twilio_bot.ask_certification_date()
 
 
 @blueprint.route('/bot/validate-certification-date', methods=['POST'])
 @validate_twilio_request
 def validate_certification_date():
-    bot = TwilioBot(base_url=current_app.config['BOT_BASE_URL'])
-    return bot.validate_next_alert(request.form)
+    return twilio_bot.validate_next_alert(request.form)
 
 
 @blueprint.route('/bot/say-thanks', methods=['POST'])
 @validate_twilio_request
 def collect():
-    bot = TwilioBot(base_url=current_app.config['BOT_BASE_URL'])
-    bot.collect_certification_date(request.form)
+    twilio_bot.collect_certification_date(request.form)
+    alert_model = dict(phone_number=7735551234, next_alert_at='', in_progress=0, timezone='America/Chicago',
+                       certification_day='wednesday', alert_time='09:30:00')
 
-    return bot.say_thanks()
+    return twilio_bot.say_thanks()
