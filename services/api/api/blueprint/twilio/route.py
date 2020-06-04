@@ -21,9 +21,8 @@ def ask_certification_date():
 @blueprint.route('/bot/validate-certification-date', methods=['POST'])
 @validate_twilio_request
 def validate_certification_date():
-    form_post = request.form
     bot = TwilioBot(base_url=current_app.config['BOT_BASE_URL'])
-    return bot.validate_next_alert(form_post['CurrentInput'])
+    return bot.validate_next_alert(request.form)
 
 
 @blueprint.route('/bot/say-thanks', methods=['POST'])

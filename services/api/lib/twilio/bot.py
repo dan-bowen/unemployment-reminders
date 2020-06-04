@@ -53,8 +53,8 @@ class TwilioBot:
 
         self.collected_certification_date = next_certification_date
 
-    def validate_next_alert(self, next_alert):
-        is_valid = CollectNextAlert(next_alert).is_valid
+    def validate_next_alert(self, form_post):
+        is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
         return {'valid': is_valid}
 
     def subscribe(self, alert_model):
