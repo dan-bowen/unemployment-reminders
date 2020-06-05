@@ -77,5 +77,6 @@ class CollectNextAlert:
             """
             next_alert = local_now + relativedelta(days=+1, weekday=day_of_week(+1))
 
-        next_alert = next_alert.replace(hour=self.alert_time.hour, minute=self.alert_time.minute)
+        next_alert = next_alert.replace(hour=self.alert_time.hour, minute=self.alert_time.minute,
+                                        second=self.alert_time.second, microsecond=0)
         return next_alert.astimezone(pytz.timezone('UTC'))

@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone, time
 from lib.collect import CollectNextAlert
 from api.repo import AlertsRepo
 
@@ -10,6 +11,9 @@ class TwilioBot:
 
         self.base_url = None
         self.collected_next_alert = None
+        self.collected_timezone = None
+        self.collected_alert_time = None
+        self.collected_phone_number = None
 
         if app is not None:
             self.init_app(app)
@@ -65,8 +69,35 @@ class TwilioBot:
         is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
         return {'valid': is_valid}
 
-    def subscribe(self, alert_model):
-        self.alerts_repo.create_alert(alert_model)
+    def collect_timezone(self, timezone):
+        """Ex: America/Chicago"""
+        self.collected_timezone = timezone
+
+    def collect_alert_time(self, alert_time):
+        """ISO 8601 formatted time part"""
+        self.collected_alert_time = alert_time
+
+    def collect_phone_number(self, phone_number):
+        self.collected_phone_number = phone_number
+
+    def create_alert_model(self):
+        now = datetime.now(timezone.utc)
+        next_alert = CollectNextAlert(self.collected_next_alert,
+                                      timezone=self.collected_timezone,
+                                      alert_time=self.collected_alert_time)
+
+        alert_model = dict(phone_number=self.collected_phone_number,
+                           timezone=self.collected_timezone,
+                           alert_time=self.collected_alert_time,
+                           next_alert_at=next_alert.next_alert_at(now).isoformat(),
+                           in_progress=0,
+                           certification_day=next_alert.day_of_week
+                           )
+
+        return alert_model
+
+    def subscribe(self):
+        self.alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
         message = (
