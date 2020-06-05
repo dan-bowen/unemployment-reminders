@@ -22,3 +22,12 @@ class AlertsRepo:
             Item=AlertSchema().dump(alert_model)
         )
         return response
+
+    def delete_alert(self, phone_number):
+        response = dynamo_client.alerts_table.delete_item(
+            Key={
+                'phone_number': phone_number
+            }
+        )
+
+        return response
