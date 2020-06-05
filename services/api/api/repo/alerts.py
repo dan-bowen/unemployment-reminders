@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+from boto3.dynamodb.conditions import Key
 from api.extension import dynamo_client
 from api.schema.alert import AlertSchema
 
@@ -31,3 +33,11 @@ class AlertsRepo:
         )
 
         return response
+
+    def get_pending_alerts(self):
+        now = datetime.now(timezone.utc)
+        response = dynamo_client.alerts_table.query(
+            IndexName="gsi_queue",
+            KeyConditionExpression=Key('in_progress').eq(0) & Key('next_alert_at').lt(now.isoformat()),
+        )
+        return response['Items']

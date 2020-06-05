@@ -9,7 +9,9 @@ CODE_DIR = abspath(join(THIS_DIR, '..'))
 sys.path.append(CODE_DIR)
 
 from api.wsgi import app
+from api.repo import AlertsRepo
 
 
 def lambda_handler(event, context):
-    return {'bot_base_url': app.config['BOT_BASE_URL']}
+    pending_alerts = AlertsRepo().get_pending_alerts()
+    return pending_alerts
