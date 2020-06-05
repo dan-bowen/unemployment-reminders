@@ -188,7 +188,7 @@ class TestConfig(BaseConfig):
         self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
         self.BASE_DIR = basedir
         # self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
-        self.DYNAMODB_ENDPOINT = None
+        self.DYNAMODB_ENDPOINT = os.getenv('DYNAMODB_ENDPOINT')
 
         #########
         # FLASK #

@@ -12,7 +12,7 @@ help:
 
 test: ## Run unit tests
 	@docker-compose exec api bash -c \
-	    'FLASK_ENV="test" SECRET_KEY="" TWILIO_AUTH_TOKEN="" nose2 -v'
+	    'FLASK_ENV="test" SECRET_KEY="" TWILIO_AUTH_TOKEN="" DYNAMODB_ENDPOINT="http://localhost:8000" AWS_DEFAULT_REGION="us-east-1" nose2 -v'
 
 lint: ## Lint python files
 	@docker-compose exec api bash -c \

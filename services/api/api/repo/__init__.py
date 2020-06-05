@@ -1,1 +1,1 @@
-from .reminders import RemindersRepo
+from .alerts import AlertsRepo

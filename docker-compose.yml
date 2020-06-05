@@ -28,6 +28,17 @@ services: # containers. same as `docker run`
     networks:
       - backend
 
+  dynamodb_admin:
+    image: 'aaronshaf/dynamodb-admin'
+    ports:
+      - '8001:8001'
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb:8000
+    networks:
+      - frontend
+      - backend
+
+
 networks:                             # Optional, same as `docker network create`
   frontend:
     driver: bridge

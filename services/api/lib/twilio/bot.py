@@ -1,12 +1,27 @@
 import json
+from datetime import datetime, timezone, time
+from lib.collect import CollectNextAlert
+from api.repo import AlertsRepo
 
 
 class TwilioBot:
-    def __init__(self, base_url=None):
-        self.base_url = base_url
-        self.collected_certification_date = None
+    def __init__(self, app=None):
+        self.app = app
+        self.alerts_repo = AlertsRepo()
 
-    def ask_certification_date(self):
+        self.base_url = None
+        self.collected_next_alert = None
+        self.collected_timezone = None
+        self.collected_alert_time = None
+        self.collected_phone_number = None
+
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        self.base_url = app.config['BOT_BASE_URL']
+
+    def ask_next_alert(self):
         return {
             "actions": [
                 {
@@ -43,17 +58,50 @@ class TwilioBot:
             ]
         }
 
-    def collect_certification_date(self, params):
+    def collect_next_alert(self, form_post):
         """Collects certification date from Twilio POST"""
-        memory = json.loads(params.get('Memory'))
+        memory = json.loads(form_post.get('Memory'))
         answers = memory['twilio']['collected_data']['next_certification_date']['answers']
-        next_certification_date = answers['next_certification_date']['answer']
 
-        self.collected_certification_date = next_certification_date
+        self.collected_next_alert = answers['next_certification_date']['answer']
+
+    def validate_next_alert(self, form_post):
+        is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
+        return {'valid': is_valid}
+
+    def collect_timezone(self, timezone):
+        """Ex: America/Chicago"""
+        self.collected_timezone = timezone
+
+    def collect_alert_time(self, alert_time):
+        """ISO 8601 formatted time part"""
+        self.collected_alert_time = alert_time
+
+    def collect_phone_number(self, phone_number):
+        self.collected_phone_number = phone_number
+
+    def create_alert_model(self):
+        now = datetime.now(timezone.utc)
+        next_alert = CollectNextAlert(self.collected_next_alert,
+                                      timezone=self.collected_timezone,
+                                      alert_time=self.collected_alert_time)
+
+        alert_model = dict(phone_number=self.collected_phone_number,
+                           timezone=self.collected_timezone,
+                           alert_time=self.collected_alert_time,
+                           next_alert_at=next_alert.next_alert_at(now).isoformat(),
+                           in_progress=0,
+                           certification_day=next_alert.day_of_week
+                           )
+
+        return alert_model
+
+    def subscribe(self):
+        self.alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
         message = (
-            f'Okay great. I\'ll remind you on {self.collected_certification_date} and every two weeks after that.'
+            f'Okay great. I\'ll remind you on {self.collected_next_alert} and every two weeks after that.'
             f' Thanks for using my app.'
         )
         return {
