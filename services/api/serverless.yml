@@ -74,6 +74,8 @@ package:
   include:
     - '!./**'
     - 'api/**'
+    - 'lib/**'
+    - 'functions/**'
   exclude:
     - '**'
 
@@ -91,6 +93,15 @@ functions:
       BOT_BASE_URL: ${self:custom.stage_vars.${self:provider.stage}.bot_base_url}
       # Tell wsgi handler about our basepath. Required in conjunction with serverless-domain-manager plugin.
       API_GATEWAY_BASE_PATH: ${self:provider.stage}
+  poller:
+    handler: functions/poller.lambda_handler
+    events:
+      - schedule: rate(1 minute)
+    timeout: 600
+    memorySize: 1024
+    environment:
+      FLASK_ENV: ${self:provider.stage}
+      SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
 
 resources:
   Resources:
