@@ -27,16 +27,28 @@ def validate_certification_date():
 
 @blueprint.route('/bot/say-thanks', methods=['POST'])
 @validate_twilio_request
-def collect():
+def subscribe():
     twilio_bot = TwilioBot(app=current_app)
     twilio_bot.collect_next_alert(request.form)
+
+    phone_number = request.form['UserIdentifier']
 
     # TODO actually ask the user for these
     twilio_bot.collect_timezone('America/Chicago')
     twilio_bot.collect_alert_time('09:30:00')
-    twilio_bot.collect_phone_number('7735551234')
+    twilio_bot.collect_phone_number(phone_number)
 
     # subscribe to alerts
     twilio_bot.subscribe()
 
     return twilio_bot.say_thanks()
+
+
+@blueprint.route('/bot/unsubscribe', methods=['POST'])
+@validate_twilio_request
+def unsubscribe():
+    twilio_bot = TwilioBot(app=current_app)
+    # unsubscribe from alerts
+    twilio_bot.unsubscribe(request.form)
+
+    return twilio_bot.say_goodbye()

@@ -109,3 +109,18 @@ class TwilioBot:
                 {'say': message}
             ]
         }
+
+    def unsubscribe(self, form_post):
+        phone_number = form_post['UserIdentifier']
+        self.alerts_repo.delete_alert(phone_number)
+
+    def say_goodbye(self):
+        message = (
+            f'Thanks for letting me know. I\'ll stop sending reminders.'
+            f' Thanks for using my app.'
+        )
+        return {
+            'actions': [
+                {'say': message}
+            ]
+        }
