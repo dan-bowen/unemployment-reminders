@@ -16,7 +16,7 @@ Resources:
     Properties:
       Name: !Sub reminders/app/${ApplicationEnv}
       Description: Secrets for unemployment reminders app
-      SecretString: '{"SECRET_KEY":""}'
+      SecretString: '{"SECRET_KEY":"", "TWILIO_AUTH_TOKEN":"", "TWILIO_ACCOUNT_SID":""}'
 Outputs:
   SecretsArn:
     Description: ARN of the secrets
