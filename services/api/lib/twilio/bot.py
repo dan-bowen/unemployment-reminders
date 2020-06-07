@@ -1,15 +1,21 @@
 import json
 from datetime import datetime, timezone, time
+from lib.twilio import TwilioClient
 from lib.collect import CollectNextAlert
 from api.repo import AlertsRepo
+
+
+alerts_repo = AlertsRepo()
+message_footer = "\n\nThanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
 class TwilioBot:
     def __init__(self, app=None):
         self.app = app
-        self.alerts_repo = AlertsRepo()
 
         self.base_url = None
+        self.sms_number = None
+        self.twilio_client = None
         self.collected_next_alert = None
         self.collected_timezone = None
         self.collected_alert_time = None
@@ -20,6 +26,11 @@ class TwilioBot:
 
     def init_app(self, app):
         self.base_url = app.config['BOT_BASE_URL']
+        self.sms_number = app.config['BOT_SMS_NUMBER']
+        self.twilio_client = TwilioClient(
+            app.config['SECRETS'].TWILIO_ACCOUNT_SID,
+            app.config['SECRETS'].TWILIO_AUTH_TOKEN
+        )
 
     def ask_next_alert(self):
         return {
@@ -97,12 +108,12 @@ class TwilioBot:
         return alert_model
 
     def subscribe(self):
-        self.alerts_repo.create_alert(self.create_alert_model())
+        alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
         message = (
             f'Okay great. I\'ll remind you on {self.collected_next_alert} and every two weeks after that.'
-            f' Thanks for using my app.'
+            f'{message_footer}'
         )
         return {
             'actions': [
@@ -112,15 +123,28 @@ class TwilioBot:
 
     def unsubscribe(self, form_post):
         phone_number = form_post['UserIdentifier']
-        self.alerts_repo.delete_alert(phone_number)
+        alerts_repo.delete_alert(phone_number)
 
     def say_goodbye(self):
         message = (
             f'Thanks for letting me know. I\'ll stop sending reminders.'
-            f' Thanks for using my app.'
+            f'{message_footer}'
         )
         return {
             'actions': [
                 {'say': message}
             ]
         }
+
+    def say_reminder(self, phone_number):
+        message = self.twilio_client.send_sms(
+            to=phone_number,
+            from_=self.sms_number,
+            body=(
+                f'This is a reminder from CertBot. Don\'t forget to certify for unemployment benefits today. '
+                f'Good luck with your job search.'
+                f'{message_footer}'
+            )
+        )
+
+        return message

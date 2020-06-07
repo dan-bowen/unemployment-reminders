@@ -14,3 +14,12 @@ class TwilioClient:
     def validate_request(self, uri, params, signature):
         """proxy twilio.RequestValidator.validate()"""
         return self.request_validator.validate(uri, params, signature)
+
+    def send_sms(self, to="", from_="", body=""):
+        message = self.client.messages.create(
+            to=to,
+            from_=from_,
+            body=body
+        )
+
+        return message
