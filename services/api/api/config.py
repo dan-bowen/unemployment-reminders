@@ -128,6 +128,7 @@ class BaseConfig:
         self.SECRETS = Secrets(dict(SECRET_KEY='', TWILIO_ACCOUNT_SID='', TWILIO_AUTH_TOKEN=''))
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = None
 
         #########
@@ -149,6 +150,7 @@ class DevConfig(BaseConfig):
         self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = os.getenv('DYNAMODB_ENDPOINT')
 
         #########
@@ -170,6 +172,7 @@ class StageConfig(BaseConfig):
         self.SECRETS = Secrets(SecretsFromSecretsManager().get_secrets())
         self.BASE_DIR = basedir
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = None
 
         #########
@@ -190,7 +193,8 @@ class TestConfig(BaseConfig):
         #######
         self.SECRETS = Secrets(SecretsFromEnv().get_secrets())
         self.BASE_DIR = basedir
-        # self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
+        self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = os.getenv('DYNAMODB_ENDPOINT')
 
         #########
