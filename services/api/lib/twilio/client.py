@@ -1,9 +1,11 @@
+from twilio.rest import Client
 from twilio.request_validator import RequestValidator
 
 
 class TwilioClient:
-    def __init__(self, twilio_auth_token=None):
-        self.request_validator = RequestValidator(twilio_auth_token)
+    def __init__(self, account_sid, auth_token):
+        self.client = Client(account_sid, auth_token)
+        self.request_validator = RequestValidator(auth_token)
 
     def compute_signature(self, uri, params):
         """proxy twilio.RequestValidator.compute_signature()"""
