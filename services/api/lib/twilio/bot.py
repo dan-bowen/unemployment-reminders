@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timezone, time
-from lib.twilio import TwilioClient
+from lib.twilio import TwilioClient, TwilioClientException
 from lib.collect import CollectNextAlert
 from api.repo import AlertsRepo
 
@@ -137,14 +137,21 @@ class TwilioBot:
         }
 
     def say_reminder(self, phone_number):
-        message = self.twilio_client.send_sms(
-            to=phone_number,
-            from_=self.sms_number,
-            body=(
-                f'This is a reminder from CertBot. Don\'t forget to certify for unemployment benefits today. '
-                f'Good luck with your job search.'
-                f'{message_footer}'
+        try:
+            message = self.twilio_client.send_sms(
+                to=phone_number,
+                from_=self.sms_number,
+                body=(
+                    f'This is a reminder from CertBot. Don\'t forget to certify for unemployment benefits today. '
+                    f'Good luck with your job search.'
+                    f'{message_footer}'
+                )
             )
-        )
+        except TwilioClientException:
+            raise TwilioBotException(f'Failed to send reminder for phone number: {phone_number}')
 
         return message
+
+
+class TwilioBotException(Exception):
+    pass

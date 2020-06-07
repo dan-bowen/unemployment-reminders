@@ -1,5 +1,6 @@
 from twilio.rest import Client
 from twilio.request_validator import RequestValidator
+from twilio.base.exceptions import TwilioRestException
 
 
 class TwilioClient:
@@ -16,10 +17,17 @@ class TwilioClient:
         return self.request_validator.validate(uri, params, signature)
 
     def send_sms(self, to="", from_="", body=""):
-        message = self.client.messages.create(
-            to=to,
-            from_=from_,
-            body=body
-        )
+        try:
+            message = self.client.messages.create(
+                to=to,
+                from_=from_,
+                body=body
+            )
+        except TwilioRestException:
+            raise TwilioClientException('Failed to send SMS')
 
         return message
+
+
+class TwilioClientException(Exception):
+    pass
