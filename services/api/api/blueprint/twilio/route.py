@@ -30,12 +30,7 @@ def validate_certification_date():
 def subscribe():
     twilio_bot = TwilioBot(app=current_app)
     twilio_bot.collect_next_alert(request.form)
-
     phone_number = request.form['UserIdentifier']
-
-    # TODO actually ask the user for these
-    twilio_bot.collect_timezone('America/Chicago')
-    twilio_bot.collect_alert_time('09:30:00')
     twilio_bot.collect_phone_number(phone_number)
 
     # subscribe to alerts

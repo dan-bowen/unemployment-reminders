@@ -1,4 +1,5 @@
 import json
+import pytz
 from datetime import datetime, timezone, time
 from lib.twilio import TwilioClient, TwilioClientException
 from lib.collect import CollectNextAlert
@@ -9,6 +10,10 @@ message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
 class TwilioBot:
+    # TODO actually ask the user for these
+    default_timezone = 'America/Chicago'
+    default_alert_time = '09:30:00'
+
     def __init__(self, app=None):
         self.app = app
 
@@ -16,8 +21,6 @@ class TwilioBot:
         self.sms_number = None
         self.twilio_client = None
         self.collected_next_alert = None
-        self.collected_timezone = None
-        self.collected_alert_time = None
         self.collected_phone_number = None
 
         if app is not None:
@@ -82,26 +85,18 @@ class TwilioBot:
         is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
         return {'valid': is_valid}
 
-    def collect_timezone(self, timezone):
-        """Ex: America/Chicago"""
-        self.collected_timezone = timezone
-
-    def collect_alert_time(self, alert_time):
-        """ISO 8601 formatted time part"""
-        self.collected_alert_time = alert_time
-
     def collect_phone_number(self, phone_number):
         self.collected_phone_number = phone_number
 
     def create_alert_model(self):
         now = datetime.now(timezone.utc)
         next_alert = CollectNextAlert(self.collected_next_alert,
-                                      timezone=self.collected_timezone,
-                                      alert_time=self.collected_alert_time)
+                                      timezone=self.default_timezone,
+                                      alert_time=self.default_alert_time)
 
         alert_model = dict(phone_number=self.collected_phone_number,
-                           timezone=self.collected_timezone,
-                           alert_time=self.collected_alert_time,
+                           timezone=self.default_timezone,
+                           alert_time=self.default_alert_time,
                            next_alert_at=next_alert.next_alert_at(now).isoformat(),
                            in_progress=0,
                            certification_day=next_alert.day_of_week
@@ -113,14 +108,18 @@ class TwilioBot:
         alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
-
-        message = (
-            f"Okay great. I'll remind you on {self.collected_next_alert} and every two weeks after that.\n\n"
-            f"{message_footer}"
-        )
+        alert_model = self.create_alert_model()
+        next_alert = datetime.fromisoformat(alert_model['next_alert_at'])
+        default_timezone = pytz.timezone(self.default_timezone)
+        formatted_date = next_alert.astimezone(default_timezone).strftime('%A, %B %d at %I:%M %p')
         return {
             'actions': [
-                {'say': message}
+                {
+                    'say': (
+                        f"Okay great. I'll remind you on {formatted_date} and every two weeks after that.\n\n"
+                        f"{message_footer}"
+                    )
+                }
             ]
         }
 
