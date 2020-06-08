@@ -100,7 +100,7 @@ functions:
   poller:
     handler: functions/poller.lambda_handler
     events:
-      - schedule: rate(1 minute)
+      - schedule: rate(5 minutes)
     timeout: 600
     memorySize: 1024
     environment:
