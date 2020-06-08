@@ -45,7 +45,7 @@ def send_sms(alerts):
 def apply_next_alert(alert):
     # pin "now" to the previous "next_alert_at" so we don't introduce drift from the original alert
     now = datetime.fromisoformat(alert['next_alert_at'])
-    next_alert = CollectNextAlert(f"next {alert['certification_day']}",
+    next_alert = CollectNextAlert(f"next {alert['alert_day']}",
                                   timezone=alert['timezone'],
                                   alert_time=alert['alert_time'])
 

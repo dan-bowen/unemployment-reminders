@@ -11,14 +11,14 @@ def ping():
     return {'hello': 'world'}
 
 
-@blueprint.route('/bot/ask-certification-date', methods=['POST'])
+@blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
 def ask_certification_date():
     twilio_bot = TwilioBot(app=current_app)
     return twilio_bot.ask_next_alert()
 
 
-@blueprint.route('/bot/validate-certification-date', methods=['POST'])
+@blueprint.route('/bot/validate-next-alert', methods=['POST'])
 @validate_twilio_request
 def validate_certification_date():
     twilio_bot = TwilioBot(app=current_app)
@@ -30,12 +30,7 @@ def validate_certification_date():
 def subscribe():
     twilio_bot = TwilioBot(app=current_app)
     twilio_bot.collect_next_alert(request.form)
-
     phone_number = request.form['UserIdentifier']
-
-    # TODO actually ask the user for these
-    twilio_bot.collect_timezone('America/Chicago')
-    twilio_bot.collect_alert_time('09:30:00')
     twilio_bot.collect_phone_number(phone_number)
 
     # subscribe to alerts

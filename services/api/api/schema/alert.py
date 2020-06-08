@@ -9,5 +9,5 @@ class AlertSchema(Schema):
     next_alert_at = fields.Str()
     in_progress = fields.Integer()
     timezone = fields.Str()
-    certification_day = fields.Str()
+    alert_day = fields.Str()
     alert_time = fields.Str()
