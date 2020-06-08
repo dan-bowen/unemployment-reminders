@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+from boto3.dynamodb.conditions import Key
 from api.extension import dynamo_client
 from api.schema.alert import AlertSchema
 
@@ -30,4 +32,37 @@ class AlertsRepo:
             }
         )
 
+        return response
+
+    def get_pending_alerts(self):
+        now = datetime.now(timezone.utc)
+        response = dynamo_client.alerts_table.query(
+            IndexName="gsi_queue",
+            KeyConditionExpression=Key('in_progress').eq(0) & Key('next_alert_at').lt(now.isoformat()),
+        )
+        return response['Items']
+
+    def set_in_progress(self, phone_number):
+        response = dynamo_client.alerts_table.update_item(
+            Key={
+                'phone_number': phone_number
+            },
+            UpdateExpression="SET in_progress = :in_progress",
+            ExpressionAttributeValues={
+                ':in_progress': 1
+            }
+        )
+        return response
+
+    def set_next_alert(self, phone_number, next_alert_at):
+        response = dynamo_client.alerts_table.update_item(
+            Key={
+                'phone_number': phone_number
+            },
+            UpdateExpression="SET in_progress = :in_progress, next_alert_at = :next_alert_at",
+            ExpressionAttributeValues={
+                ':in_progress': 0,
+                ':next_alert_at': next_alert_at
+            }
+        )
         return response

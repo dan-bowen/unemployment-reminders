@@ -57,7 +57,11 @@ custom:
       host: dynamodb
       port: 8000
       noStart: true
-      migrate: true
+    seed:
+      init:
+        sources:
+          - table: ${self:custom.dynamo_db_table}
+            sources: [./data/dynamo.seed.init.json]
     stages:
       - dev
   # Python requirements Plugin: https://github.com/UnitedIncome/serverless-python-requirements
@@ -74,6 +78,8 @@ package:
   include:
     - '!./**'
     - 'api/**'
+    - 'lib/**'
+    - 'functions/**'
   exclude:
     - '**'
 
@@ -91,6 +97,15 @@ functions:
       BOT_BASE_URL: ${self:custom.stage_vars.${self:provider.stage}.bot_base_url}
       # Tell wsgi handler about our basepath. Required in conjunction with serverless-domain-manager plugin.
       API_GATEWAY_BASE_PATH: ${self:provider.stage}
+  poller:
+    handler: functions/poller.lambda_handler
+    events:
+      - schedule: rate(5 minutes)
+    timeout: 600
+    memorySize: 1024
+    environment:
+      FLASK_ENV: ${self:provider.stage}
+      SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
 
 resources:
   Resources:

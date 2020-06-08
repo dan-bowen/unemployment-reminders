@@ -21,7 +21,7 @@ class CollectNextAlert:
 
     def __init__(self, date, timezone='America/Chicago', alert_time='09:30:00'):
         self.date = date
-        self.matches = re.search(self.pattern, self.date, re.IGNORECASE)
+        self.matches = re.search(self.pattern, self.date.strip(), re.IGNORECASE)
         self.timezone = timezone
         self.alert_time = time.fromisoformat(alert_time)
 
