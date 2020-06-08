@@ -136,7 +136,7 @@ resources:
             Projection:
               NonKeyAttributes:
                 # monday, tuesday, wednesday, thursday, friday
-                - certification_day
+                - alert_day
                 # America/Chicago
                 - timezone
                 # UTC ISO 8601 date. The poller manages this value.

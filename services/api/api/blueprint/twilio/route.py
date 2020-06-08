@@ -11,14 +11,14 @@ def ping():
     return {'hello': 'world'}
 
 
-@blueprint.route('/bot/ask-certification-date', methods=['POST'])
+@blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
 def ask_certification_date():
     twilio_bot = TwilioBot(app=current_app)
     return twilio_bot.ask_next_alert()
 
 
-@blueprint.route('/bot/validate-certification-date', methods=['POST'])
+@blueprint.route('/bot/validate-next-alert', methods=['POST'])
 @validate_twilio_request
 def validate_certification_date():
     twilio_bot = TwilioBot(app=current_app)

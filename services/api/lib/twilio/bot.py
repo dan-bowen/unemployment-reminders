@@ -39,11 +39,11 @@ class TwilioBot:
             "actions": [
                 {
                     "collect": {
-                        "name":        "next_certification_date",
+                        "name":        "next_alert_date",
                         "questions":   [
                             {
                                 "question": "What is your next certification day?",
-                                "name":     "next_certification_date",
+                                "name":     "next_alert_date",
                                 "validate": {
                                     "on_failure":   {
                                         "messages": [
@@ -57,7 +57,7 @@ class TwilioBot:
                                     },
                                     "webhook":      {
                                         "method": "POST",
-                                        "url":    f"{self.base_url}/bot/validate-certification-date"
+                                        "url":    f"{self.base_url}/bot/validate-next-alert"
                                     },
                                     "max_attempts": {
                                         "redirect":     "task://collect_fallback",
@@ -77,9 +77,9 @@ class TwilioBot:
     def collect_next_alert(self, form_post):
         """Collects certification date from Twilio POST"""
         memory = json.loads(form_post.get('Memory'))
-        answers = memory['twilio']['collected_data']['next_certification_date']['answers']
+        answers = memory['twilio']['collected_data']['next_alert_date']['answers']
 
-        self.collected_next_alert = answers['next_certification_date']['answer']
+        self.collected_next_alert = answers['next_alert_date']['answer']
 
     def validate_next_alert(self, form_post):
         is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
@@ -99,7 +99,7 @@ class TwilioBot:
                            alert_time=self.default_alert_time,
                            next_alert_at=next_alert.next_alert_at(now).isoformat(),
                            in_progress=0,
-                           certification_day=next_alert.day_of_week
+                           alert_day=next_alert.day_of_week
                            )
 
         return alert_model
