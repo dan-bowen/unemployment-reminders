@@ -4,9 +4,8 @@ from lib.twilio import TwilioClient, TwilioClientException
 from lib.collect import CollectNextAlert
 from api.repo import AlertsRepo
 
-
 alerts_repo = AlertsRepo()
-message_footer = "\n\nThanks for using my app.\nhttps://www.crucialwebstudio.com"
+message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
 class TwilioBot:
@@ -46,7 +45,10 @@ class TwilioBot:
                                     "on_failure":   {
                                         "messages": [
                                             {
-                                                "say": "That isn't a day I recognize. You can say things like Monday, Next Monday, etc."
+                                                "say": (
+                                                    f"I'm sorry, that isn't a day I recognize. "
+                                                    f"You can say things like Monday, Next Monday, etc."
+                                                )
                                             }
                                         ]
                                     },
@@ -55,7 +57,7 @@ class TwilioBot:
                                         "url":    f"{self.base_url}/bot/validate-certification-date"
                                     },
                                     "max_attempts": {
-                                        "redirect":     "task://having_trouble",
+                                        "redirect":     "task://collect_fallback",
                                         "num_attempts": 3
                                     }
                                 }
@@ -111,9 +113,10 @@ class TwilioBot:
         alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
+
         message = (
-            f'Okay great. I\'ll remind you on {self.collected_next_alert} and every two weeks after that.'
-            f'{message_footer}'
+            f"Okay great. I'll remind you on {self.collected_next_alert} and every two weeks after that.\n\n"
+            f"{message_footer}"
         )
         return {
             'actions': [
@@ -126,13 +129,14 @@ class TwilioBot:
         alerts_repo.delete_alert(phone_number)
 
     def say_goodbye(self):
-        message = (
-            f'Thanks for letting me know. I\'ll stop sending reminders.'
-            f'{message_footer}'
-        )
         return {
             'actions': [
-                {'say': message}
+                {
+                    'say': (
+                        f"Thanks for letting me know. I'll stop sending reminders."
+                        f"{message_footer}"
+                    )
+                }
             ]
         }
 
@@ -142,9 +146,9 @@ class TwilioBot:
                 to=phone_number,
                 from_=self.sms_number,
                 body=(
-                    f'This is a reminder from CertBot. Don\'t forget to certify for unemployment benefits today. '
-                    f'Good luck with your job search.'
-                    f'{message_footer}'
+                    f"This is a friendly reminder. Don't forget to certify for unemployment benefits today. "
+                    f"Good luck with your job search.\n\n"
+                    f"{message_footer}"
                 )
             )
         except TwilioClientException:
