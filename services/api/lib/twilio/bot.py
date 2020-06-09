@@ -174,7 +174,7 @@ class TwilioBot:
                 to=phone_number,
                 from_=self.sms_number,
                 body=(
-                    f"This is a friendly reminder. Don't forget to certify for unemployment benefits today. "
+                    f"This is a friendly reminder. Don't forget to certify for unemployment benefits today.\n\n"
                     f"Good luck with your job search.\n\n"
                     f"{message_footer}"
                 )
