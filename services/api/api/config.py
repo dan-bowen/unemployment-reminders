@@ -130,6 +130,7 @@ class BaseConfig:
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
         self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = None
+        self.API_GATEWAY_BASE_PATH = None
 
         #########
         # FLASK #
@@ -152,6 +153,7 @@ class DevConfig(BaseConfig):
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
         self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = os.getenv('DYNAMODB_ENDPOINT')
+        self.API_GATEWAY_BASE_PATH = os.getenv('API_GATEWAY_BASE_PATH')
 
         #########
         # FLASK #
@@ -174,6 +176,7 @@ class StageConfig(BaseConfig):
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
         self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = None
+        self.API_GATEWAY_BASE_PATH = os.getenv('API_GATEWAY_BASE_PATH')
 
         #########
         # FLASK #
@@ -196,6 +199,7 @@ class TestConfig(BaseConfig):
         self.BOT_BASE_URL = os.getenv('BOT_BASE_URL')
         self.BOT_SMS_NUMBER = os.getenv('BOT_SMS_NUMBER')
         self.DYNAMODB_ENDPOINT = os.getenv('DYNAMODB_ENDPOINT')
+        self.API_GATEWAY_BASE_PATH = os.getenv('API_GATEWAY_BASE_PATH')
 
         #########
         # FLASK #
