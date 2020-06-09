@@ -127,18 +127,6 @@ class TwilioBot:
         phone_number = form_post['UserIdentifier']
         alerts_repo.delete_alert(phone_number)
 
-    def say_goodbye(self):
-        return {
-            'actions': [
-                {
-                    'say': (
-                        f"Thanks for letting me know. I'll stop sending reminders."
-                        f"{message_footer}"
-                    )
-                }
-            ]
-        }
-
     def say_fallback(self):
         return {
             "actions": [
