@@ -139,6 +139,18 @@ class TwilioBot:
             ]
         }
 
+    def say_fallback(self):
+        return {
+            "actions": [
+                {
+                    "say": "I'm sorry didn't quite get that. Please say that again."
+                },
+                {
+                    "listen": True
+                }
+            ]
+        }
+
     def say_reminder(self, phone_number):
         try:
             message = self.twilio_client.send_sms(
