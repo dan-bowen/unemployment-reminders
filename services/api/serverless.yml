@@ -42,12 +42,18 @@ custom:
     dev:
       aws_profile: personal_crucial_dev
       bot_base_url: ''
+      bot_sms_number: ''
+      custom_domain: ''
     stage:
       aws_profile: ''
       bot_base_url: ''
+      bot_sms_number: ''
+      custom_domain: ''
     prod:
       aws_profile: ''
       bot_base_url: ''
+      bot_sms_number: ''
+      custom_domain: ''
   # WSGI Plugin: https://github.com/logandk/serverless-wsgi
   wsgi:
     app: api/wsgi.app
