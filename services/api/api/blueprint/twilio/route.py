@@ -11,6 +11,13 @@ def ping():
     return {'hello': 'world'}
 
 
+@blueprint.route('/bot/say-intro', methods=['POST'])
+def say_intro():
+    twilio_bot = TwilioBot(app=current_app)
+    twilio_bot.say_intro(request.form['phone_number'])
+    return {}
+
+
 @blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
 def ask_certification_date():

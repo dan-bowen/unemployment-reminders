@@ -34,6 +34,23 @@ class TwilioBot:
             app.config['SECRETS'].TWILIO_AUTH_TOKEN
         )
 
+    def say_intro(self, phone_number):
+        try:
+            message = self.twilio_client.send_sms(
+                to=phone_number,
+                from_=self.sms_number,
+                body=(
+                    f"Welcome to the Unemployment Reminders chatbot. Here are a few commands you can use.\n\n"
+                    f"REMIND ME to set or change a reminder.\n"
+                    f"STOP, USUBSUBSCRIBE, or QUIT to unsubscribe from all messages.\n"
+                    f"START, or UNSTOP to opt-in to messages again."
+                )
+            )
+        except TwilioClientException:
+            raise TwilioBotException(f'Failed to send intro for phone number: {phone_number}')
+
+        return message
+
     def ask_next_alert(self):
         return {
             "actions": [
