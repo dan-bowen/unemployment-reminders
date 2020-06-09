@@ -60,6 +60,7 @@ custom:
     pythonBin: python3
     packRequirements: false
   dynamodb:
+    # We are using a separate container for this
     # https://github.com/99xt/serverless-dynamodb-local/issues/57#issuecomment-507005352
     start:
       host: dynamodb
