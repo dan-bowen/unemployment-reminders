@@ -47,3 +47,11 @@ def unsubscribe():
     twilio_bot.unsubscribe(request.form)
 
     return twilio_bot.say_goodbye()
+
+
+@blueprint.route('/bot/fallback', methods=['POST'])
+@validate_twilio_request
+def fallback():
+    twilio_bot = TwilioBot(app=current_app)
+
+    return twilio_bot.say_fallback()
