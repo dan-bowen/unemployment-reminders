@@ -29,6 +29,11 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:*:*:table/${self:custom.dynamo_db_table}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "arn:aws:dynamodb:*:*:table/${self:custom.dynamo_db_table}/index/*"
 
 custom:
   defaultStage: dev
