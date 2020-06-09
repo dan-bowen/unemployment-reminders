@@ -1,10 +1,8 @@
-# For full config options, check the docs:
-#    docs.serverless.com
+service: ''
 
-service: unemployment-reminders-api
 # app and org for use with dashboard.serverless.com
-app: unemployment-reminders
-org: dbowen
+#app: ''
+#org: ''
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -16,8 +14,8 @@ provider:
   stage: ${opt:stage, self:custom.defaultStage}
   profile: ${self:custom.stage_vars.${self:provider.stage}.aws_profile}
   deploymentBucket:
-    maxPreviousDeploymentArtifacts: 10 # On every deployment the framework prunes the bucket to remove artifacts older than this limit. The default is 5
-    blockPublicAccess: true # Prevents public access via ACLs or bucket policies. Default is false
+    maxPreviousDeploymentArtifacts: 10
+    blockPublicAccess: true
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -32,26 +30,38 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:*:*:table/${self:custom.dynamo_db_table}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "arn:aws:dynamodb:*:*:table/${self:custom.dynamo_db_table}/index/*"
 
 custom:
   defaultStage: dev
   dynamo_db_table: unemployment-reminders
   stage_vars:
     dev:
-      aws_profile: personal_crucial_dev
+      aws_profile: ''
       bot_base_url: ''
+      bot_sms_number: ''
+      custom_domain: ''
     stage:
       aws_profile: ''
       bot_base_url: ''
+      bot_sms_number: ''
+      custom_domain: ''
     prod:
       aws_profile: ''
       bot_base_url: ''
+      bot_sms_number: ''
+      custom_domain: ''
   # WSGI Plugin: https://github.com/logandk/serverless-wsgi
   wsgi:
     app: api/wsgi.app
     pythonBin: python3
     packRequirements: false
   dynamodb:
+    # We are using a separate container for this
     # https://github.com/99xt/serverless-dynamodb-local/issues/57#issuecomment-507005352
     start:
       host: dynamodb
@@ -64,11 +74,15 @@ custom:
             sources: [./data/dynamo.seed.init.json]
     stages:
       - dev
-  # Python requirements Plugin: https://github.com/UnitedIncome/serverless-python-requirements
-#  pythonRequirements:
-#    dockerizePip: true
+  # Custom Domain Plugin: https://github.com/amplify-education/serverless-domain-manager
+  customDomain:
+    domainName: ${self:custom.stage_vars.${self:provider.stage}.custom_domain}
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 plugins:
+  - serverless-domain-manager
   - serverless-wsgi
   - serverless-python-requirements
   - serverless-dynamodb-local
@@ -95,7 +109,7 @@ functions:
       FLASK_ENV: ${self:provider.stage}
       SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
       BOT_BASE_URL: ${self:custom.stage_vars.${self:provider.stage}.bot_base_url}
-      # Tell wsgi handler about our basepath. Required in conjunction with serverless-domain-manager plugin.
+      BOT_SMS_NUMBER: ${self:custom.stage_vars.${self:provider.stage}.bot_sms_number}
       API_GATEWAY_BASE_PATH: ${self:provider.stage}
   poller:
     handler: functions/poller.lambda_handler
@@ -106,6 +120,7 @@ functions:
     environment:
       FLASK_ENV: ${self:provider.stage}
       SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
+      BOT_SMS_NUMBER: ${self:custom.stage_vars.${self:provider.stage}.bot_sms_number}
 
 resources:
   Resources:
@@ -114,15 +129,13 @@ resources:
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
-          # 9-digit phone number, no formatting
+          # E.164 phone number. https://www.twilio.com/docs/glossary/what-e164
           - AttributeName: phone_number
             AttributeType: S
           # UTC ISO 8601 date
-          # https://www.abhayachauhan.com/2017/12/how-to-store-dates-or-timestamps-in-dynamodb/
-          # https://medium.com/cloud-native-the-gathering/querying-dynamodb-by-date-range-899b751a6ef2
           - AttributeName: next_alert_at
             AttributeType: S
-          # 1,0 Flag the alert as in progress. The poller manages this flag.
+          # 1,0 Flag the alert as in progress
           - AttributeName: in_progress
             AttributeType: N
         BillingMode: PAY_PER_REQUEST
@@ -139,13 +152,10 @@ resources:
                 - alert_day
                 # America/Chicago
                 - timezone
-                # UTC ISO 8601 date. The poller manages this value.
+                # UTC ISO 8601 date.
                 - alert_time
               ProjectionType: INCLUDE
-#            ProvisionedThroughput:
         KeySchema:
           - AttributeName: phone_number
             KeyType: HASH
-#        LocalSecondaryIndexes:
-#        ProvisionedThroughput:
         TableName: ${self:custom.dynamo_db_table}
