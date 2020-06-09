@@ -109,7 +109,6 @@ functions:
       SECRETS_MANAGER_SECRET_ARN: ${cf:unemployment-reminders-${self:provider.stage}.SecretsArn}
       BOT_BASE_URL: ${self:custom.stage_vars.${self:provider.stage}.bot_base_url}
       BOT_SMS_NUMBER: ${self:custom.stage_vars.${self:provider.stage}.bot_sms_number}
-      # Tell wsgi handler about our basepath. Required in conjunction with serverless-domain-manager plugin.
       API_GATEWAY_BASE_PATH: ${self:provider.stage}
   poller:
     handler: functions/poller.lambda_handler
