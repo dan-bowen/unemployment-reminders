@@ -72,11 +72,15 @@ custom:
             sources: [./data/dynamo.seed.init.json]
     stages:
       - dev
-  # Python requirements Plugin: https://github.com/UnitedIncome/serverless-python-requirements
-#  pythonRequirements:
-#    dockerizePip: true
+  # Custom Domain Plugin: https://github.com/amplify-education/serverless-domain-manager
+  customDomain:
+    domainName: ${self:custom.stage_vars.${self:provider.stage}.custom_domain}
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 plugins:
+  - serverless-domain-manager
   - serverless-wsgi
   - serverless-python-requirements
   - serverless-dynamodb-local
