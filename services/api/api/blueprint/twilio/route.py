@@ -39,10 +39,7 @@ def subscribe():
     twilio_bot.collect_next_alert(request.form)
     phone_number = request.form['UserIdentifier']
     twilio_bot.collect_phone_number(phone_number)
-
-    # subscribe to alerts
     twilio_bot.subscribe()
-
     return twilio_bot.say_thanks()
 
 
@@ -50,9 +47,7 @@ def subscribe():
 @validate_twilio_request
 def unsubscribe():
     twilio_bot = TwilioBot(app=current_app)
-    # unsubscribe from alerts
     twilio_bot.unsubscribe(request.form)
-
     return twilio_bot.say_goodbye()
 
 
@@ -60,5 +55,4 @@ def unsubscribe():
 @validate_twilio_request
 def fallback():
     twilio_bot = TwilioBot(app=current_app)
-
     return twilio_bot.say_fallback()
