@@ -46,7 +46,7 @@ def unsubscribe():
     # unsubscribe from alerts
     twilio_bot.unsubscribe(request.form)
 
-    return {}
+    return twilio_bot.say_goodbye()
 
 
 @blueprint.route('/bot/fallback', methods=['POST'])
