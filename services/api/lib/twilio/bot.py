@@ -41,7 +41,7 @@ class TwilioBot:
                 from_=self.sms_number,
                 body=(
                     f"Welcome to the Unemployment Reminders chatbot. Here are a few commands you can use.\n\n"
-                    f"REMIND ME to set or change a reminder.\n"
+                    f"REMIND ME to set or change a reminder.\n\n"
                     f"FOUND A JOB to cancel the remidner."
                 )
             )
@@ -58,15 +58,18 @@ class TwilioBot:
                         "name":        "next_alert_date",
                         "questions":   [
                             {
-                                "question": "What is your next certification day?",
+                                "question": (
+                                    "What is your next certification day?\n\n"
+                                    "You can say things like Monday, Next Monday, etc."
+                                ),
                                 "name":     "next_alert_date",
                                 "validate": {
                                     "on_failure":   {
                                         "messages": [
                                             {
                                                 "say": (
-                                                    f"I'm sorry, that isn't a day I recognize. "
-                                                    f"You can say things like Monday, Next Monday, etc."
+                                                    "I'm sorry, that isn't a day I recognize. Please try again.\n\n"
+                                                    "You can say things like Monday, Next Monday, etc."
                                                 )
                                             }
                                         ]
