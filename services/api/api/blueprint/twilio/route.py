@@ -20,14 +20,14 @@ def say_intro():
 
 @blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
-def ask_certification_date():
+def ask_next_alert():
     twilio_bot = TwilioBot(app=current_app)
     return twilio_bot.ask_next_alert()
 
 
 @blueprint.route('/bot/validate-next-alert', methods=['POST'])
 @validate_twilio_request
-def validate_certification_date():
+def validate_next_alert():
     twilio_bot = TwilioBot(app=current_app)
     return twilio_bot.validate_next_alert(request.form)
 
@@ -49,6 +49,14 @@ def unsubscribe():
     twilio_bot = TwilioBot(app=current_app)
     twilio_bot.unsubscribe(request.form)
     return twilio_bot.say_goodbye()
+
+
+@blueprint.route('/bot/found-a-job', methods=['POST'])
+@validate_twilio_request
+def found_a_job():
+    twilio_bot = TwilioBot(app=current_app)
+    twilio_bot.unsubscribe(request.form)
+    return twilio_bot.say_congrats()
 
 
 @blueprint.route('/bot/fallback', methods=['POST'])
