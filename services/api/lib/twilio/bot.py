@@ -42,8 +42,7 @@ class TwilioBot:
                 body=(
                     f"Welcome to the Unemployment Reminders chatbot. Here are a few commands you can use.\n\n"
                     f"REMIND ME to set or change a reminder.\n"
-                    f"STOP, USUBSUBSCRIBE, or QUIT to unsubscribe from all messages.\n"
-                    f"START, or UNSTOP to opt-in to messages again."
+                    f"FOUND A JOB to cancel the remidner."
                 )
             )
         except TwilioClientException:
@@ -134,6 +133,8 @@ class TwilioBot:
                 {
                     'say': (
                         f"Okay great. I'll remind you on {formatted_date} and every two weeks after that.\n\n"
+                        f"Found a job?\n\n"
+                        f"Reply FOUND A JOB to cancel the reminder.\n\n"
                         f"{message_footer}"
                     )
                 }
@@ -149,7 +150,21 @@ class TwilioBot:
             'actions': [
                 {
                     'say': (
-                        f"Thanks for letting me know. I'll stop sending reminders."
+                        f"You have been unsubscribed from all messages.\n\n"
+                        f"Reply START, or UNTSOP to restart messages."
+                        f"{message_footer}"
+                    )
+                }
+            ]
+        }
+
+    def say_congrats(self):
+        return {
+            'actions': [
+                {
+                    'say': (
+                        f"Congrats on finding a new job!\n\n"
+                        f"The reminder has been cancelled.\n\n"
                         f"{message_footer}"
                     )
                 }
@@ -174,8 +189,10 @@ class TwilioBot:
                 to=phone_number,
                 from_=self.sms_number,
                 body=(
-                    f"This is a friendly reminder. Don't forget to certify for unemployment benefits today.\n\n"
-                    f"Good luck with your job search.\n\n"
+                    f"Today is certification day. Be sure to file your certification to retain your benefits.\n\n"
+                    f"Best of luck with your job search.\n\n"
+                    f"Found a job?\n\n"
+                    f"Reply FOUND A JOB and we'll cancel the reminder.\n\n"
                     f"{message_footer}"
                 )
             )

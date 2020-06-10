@@ -51,6 +51,14 @@ def unsubscribe():
     return twilio_bot.say_goodbye()
 
 
+@blueprint.route('/bot/found-a-job', methods=['POST'])
+@validate_twilio_request
+def found_a_job():
+    twilio_bot = TwilioBot(app=current_app)
+    twilio_bot.unsubscribe(request.form)
+    return twilio_bot.say_congrats()
+
+
 @blueprint.route('/bot/fallback', methods=['POST'])
 @validate_twilio_request
 def fallback():
