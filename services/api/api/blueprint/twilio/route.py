@@ -20,14 +20,14 @@ def say_intro():
 
 @blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
-def ask_certification_date():
+def ask_next_alert():
     twilio_bot = TwilioBot(app=current_app)
     return twilio_bot.ask_next_alert()
 
 
 @blueprint.route('/bot/validate-next-alert', methods=['POST'])
 @validate_twilio_request
-def validate_certification_date():
+def validate_next_alert():
     twilio_bot = TwilioBot(app=current_app)
     return twilio_bot.validate_next_alert(request.form)
 
