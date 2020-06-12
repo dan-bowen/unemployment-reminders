@@ -1,12 +1,11 @@
+# See docs for full reference
+# https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
+
 service: ''
 
 # app and org for use with dashboard.serverless.com
 #app: ''
 #org: ''
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
 
 provider:
   name: aws
@@ -103,7 +102,7 @@ functions:
     events:
       - http: ANY /
       - http: ANY {proxy+}
-    timeout: 6
+    timeout: 10
     memorySize: 1024
     environment:
       FLASK_ENV: ${self:provider.stage}
@@ -114,7 +113,8 @@ functions:
   poller:
     handler: functions/poller.lambda_handler
     events:
-      - schedule: rate(5 minutes)
+      # Every 5th minute past every hour from 13 through 17 (UTC) on every day-of-week from Monday through Friday.
+      - schedule: cron(*/5 13-17 ? * MON-FRI *)
     timeout: 600
     memorySize: 1024
     environment:
