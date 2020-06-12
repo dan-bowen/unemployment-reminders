@@ -113,8 +113,8 @@ functions:
   poller:
     handler: functions/poller.lambda_handler
     events:
-      # Every 5th minute past every hour from 13 through 23 (UTC) on every day-of-week from Monday through Friday.
-      - schedule: cron(*/5 13-23 ? * MON-FRI *)
+      # Every 5th minute past every hour from 13 through 17 (UTC) on every day-of-week from Monday through Friday.
+      - schedule: cron(*/5 13-17 ? * MON-FRI *)
     timeout: 600
     memorySize: 1024
     environment:
