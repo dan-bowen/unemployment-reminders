@@ -38,4 +38,4 @@ ngrok: ## API site over NGROK.
 	@ngrok http -host-header=rewrite -subdomain=unemployment-reminders localhost:5000
 
 invoke-poller:
-	@docker-compose exec api bash -c 'python-lambda-local -f lambda_handler functions/poller.py data/poller.event.json'
+	@docker-compose exec api bash -c 'python-lambda-local -f lambda_handler src/poller.py data/poller.event.json'
