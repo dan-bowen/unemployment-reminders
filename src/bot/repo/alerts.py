@@ -1,12 +1,11 @@
 from datetime import datetime, timezone
 from boto3.dynamodb.conditions import Key
-from api.extension import dynamo_client
-from lib.schema.alert import AlertSchema
+from bot.schema.alert import AlertSchema
 
 
 class AlertsRepo:
-    def __init__(self):
-        pass
+    def __init__(self, dynamo_client):
+        self.dynamo_client = dynamo_client
 
     def count_items(self):
         """
@@ -17,16 +16,16 @@ class AlertsRepo:
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.Client.describe_table
         """
 
-        return dynamo_client.alerts_table.item_count
+        return self.dynamo_client.alerts_table.item_count
 
     def create_alert(self, alert_model):
-        response = dynamo_client.alerts_table.put_item(
+        response = self.dynamo_client.alerts_table.put_item(
             Item=AlertSchema().dump(alert_model)
         )
         return response
 
     def delete_alert(self, phone_number):
-        response = dynamo_client.alerts_table.delete_item(
+        response = self.dynamo_client.alerts_table.delete_item(
             Key={
                 'phone_number': phone_number
             }
@@ -36,14 +35,14 @@ class AlertsRepo:
 
     def get_pending_alerts(self):
         now = datetime.now(timezone.utc)
-        response = dynamo_client.alerts_table.query(
+        response = self.dynamo_client.alerts_table.query(
             IndexName="gsi_queue",
             KeyConditionExpression=Key('in_progress').eq(0) & Key('next_alert_at').lt(now.isoformat()),
         )
         return response['Items']
 
     def set_in_progress(self, phone_number):
-        response = dynamo_client.alerts_table.update_item(
+        response = self.dynamo_client.alerts_table.update_item(
             Key={
                 'phone_number': phone_number
             },
@@ -55,7 +54,7 @@ class AlertsRepo:
         return response
 
     def set_next_alert(self, phone_number, next_alert_at):
-        response = dynamo_client.alerts_table.update_item(
+        response = self.dynamo_client.alerts_table.update_item(
             Key={
                 'phone_number': phone_number
             },

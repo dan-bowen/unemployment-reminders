@@ -1,5 +1,6 @@
-from flask import Blueprint, request, current_app
-from lib.twilio import validate_twilio_request, TwilioBot
+from flask import Blueprint, request
+from lib.twilio import validate_twilio_request
+from api.extension import bot
 
 blueprint = Blueprint('twilio', __name__)
 
@@ -13,54 +14,47 @@ def ping():
 
 @blueprint.route('/bot/say-intro', methods=['POST'])
 def say_intro():
-    twilio_bot = TwilioBot(app=current_app)
-    twilio_bot.say_intro(request.form['phone_number'])
+    bot.say_intro(request.form['phone_number'])
     return {}
 
 
 @blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
 def ask_next_alert():
-    twilio_bot = TwilioBot(app=current_app)
-    return twilio_bot.ask_next_alert()
+    return bot.ask_next_alert()
 
 
 @blueprint.route('/bot/validate-next-alert', methods=['POST'])
 @validate_twilio_request
 def validate_next_alert():
-    twilio_bot = TwilioBot(app=current_app)
-    return twilio_bot.validate_next_alert(request.form)
+    return bot.validate_next_alert(request.form)
 
 
 @blueprint.route('/bot/say-thanks', methods=['POST'])
 @validate_twilio_request
 def subscribe():
-    twilio_bot = TwilioBot(app=current_app)
-    twilio_bot.collect_next_alert(request.form)
+    bot.collect_next_alert(request.form)
     phone_number = request.form['UserIdentifier']
-    twilio_bot.collect_phone_number(phone_number)
-    twilio_bot.subscribe()
-    return twilio_bot.say_thanks()
+    bot.collect_phone_number(phone_number)
+    bot.subscribe()
+    return bot.say_thanks()
 
 
 @blueprint.route('/bot/unsubscribe', methods=['POST'])
 @validate_twilio_request
 def unsubscribe():
-    twilio_bot = TwilioBot(app=current_app)
-    twilio_bot.unsubscribe(request.form)
-    return twilio_bot.say_goodbye()
+    bot.unsubscribe(request.form)
+    return bot.say_goodbye()
 
 
 @blueprint.route('/bot/found-a-job', methods=['POST'])
 @validate_twilio_request
 def found_a_job():
-    twilio_bot = TwilioBot(app=current_app)
-    twilio_bot.unsubscribe(request.form)
-    return twilio_bot.say_congrats()
+    bot.unsubscribe(request.form)
+    return bot.say_congrats()
 
 
 @blueprint.route('/bot/fallback', methods=['POST'])
 @validate_twilio_request
 def fallback():
-    twilio_bot = TwilioBot(app=current_app)
-    return twilio_bot.say_fallback()
+    return bot.say_fallback()

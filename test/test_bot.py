@@ -1,14 +1,14 @@
 import json
 import unittest
 import helpers
-from lib.twilio import TwilioBot
+from bot import ReminderBot
 
 
 class BotTests(unittest.TestCase):
 
     def setUp(self):
         self.helper = helpers.Helper()
-        self.bot = TwilioBot(app=self.helper.app)
+        self.bot = ReminderBot(app=self.helper.app)
 
     def tearDown(self):
         pass

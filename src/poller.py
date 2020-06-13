@@ -1,15 +1,13 @@
 from datetime import datetime
 from wsgi import app
-from lib.repo import AlertsRepo
-from lib.twilio import TwilioBot, TwilioBotException
-from lib.collect import CollectNextAlert
+from bot import ReminderBot, ReminderBotException
+from bot.collect import CollectNextAlert
 
-repo = AlertsRepo()
-bot = TwilioBot(app)
+bot = ReminderBot(app)
 
 
 def lambda_handler(event, context):
-    pending_alerts = repo.get_pending_alerts()
+    pending_alerts = bot.alerts_repo.get_pending_alerts()
     in_progress_alerts = apply_in_progress(pending_alerts)
     sms_alerts = send_sms(in_progress_alerts)
     return pending_alerts
@@ -17,7 +15,7 @@ def lambda_handler(event, context):
 
 def apply_in_progress(alerts):
     for alert in alerts:
-        repo.set_in_progress(alert['phone_number'])
+        bot.alerts_repo.set_in_progress(alert['phone_number'])
     return alerts
 
 
@@ -27,7 +25,7 @@ def send_sms(alerts):
             bot.say_reminder(alert['phone_number'])
             # only apply next alert if current alert is sent successfully
             apply_next_alert(alert)
-        except TwilioBotException as e:
+        except ReminderBotException as e:
             print(e)
     return alerts
 
@@ -39,4 +37,4 @@ def apply_next_alert(alert):
                                   timezone=alert['timezone'],
                                   alert_time=alert['alert_time'])
 
-    repo.set_next_alert(alert['phone_number'], next_alert.next_alert_at(now).isoformat())
+    bot.alerts_repo.set_next_alert(alert['phone_number'], next_alert.next_alert_at(now).isoformat())

@@ -1,6 +1,5 @@
 from flask import Blueprint
 import requests
-from lib.repo.alerts import AlertsRepo
 
 blueprint = Blueprint('ping', __name__)
 
@@ -16,8 +15,8 @@ def ping_detail():
         external_http_result = 'timeout'
 
     try:
-        r = AlertsRepo().count_items()
-        db_access_result = 'success'
+        # TODO ping the db
+        db_access_result = 'undefined'
     except Exception as e:
         db_access_result = 'exception'
 

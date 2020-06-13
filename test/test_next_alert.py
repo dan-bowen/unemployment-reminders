@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from lib.collect import CollectNextAlert, CollectException
+from bot.collect import CollectNextAlert, CollectException
 
 
 class NextAlertTests(unittest.TestCase):

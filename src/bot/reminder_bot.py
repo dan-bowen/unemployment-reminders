@@ -2,14 +2,14 @@ import json
 import pytz
 from datetime import datetime, timezone, time
 from lib.twilio import TwilioClient, TwilioClientException
-from lib.collect import CollectNextAlert
-from lib.repo import AlertsRepo
+from lib.dynamo.client import DynamoClient
+from .collect import CollectNextAlert
+from .repo import AlertsRepo
 
-alerts_repo = AlertsRepo()
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
-class TwilioBot:
+class ReminderBot:
     # TODO actually ask the user for these
     default_timezone = 'America/Chicago'
     default_alert_time = '09:30:00'
@@ -20,6 +20,7 @@ class TwilioBot:
         self.base_url = None
         self.sms_number = None
         self.twilio_client = None
+        self.alerts_repo = None
         self.collected_next_alert = None
         self.collected_phone_number = None
 
@@ -34,6 +35,8 @@ class TwilioBot:
             app.config['SECRETS'].TWILIO_AUTH_TOKEN
         )
 
+        self.alerts_repo = AlertsRepo(DynamoClient(app.config['DYNAMODB_ENDPOINT']))
+
     def say_intro(self, phone_number):
         try:
             message = self.twilio_client.send_sms(
@@ -46,7 +49,7 @@ class TwilioBot:
                 )
             )
         except TwilioClientException:
-            raise TwilioBotException(f'Failed to send intro for phone number: {phone_number}')
+            raise ReminderBotException(f'Failed to send intro for phone number: {phone_number}')
 
         return message
 
@@ -124,7 +127,7 @@ class TwilioBot:
         return alert_model
 
     def subscribe(self):
-        alerts_repo.create_alert(self.create_alert_model())
+        self.alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
         alert_model = self.create_alert_model()
@@ -146,7 +149,7 @@ class TwilioBot:
 
     def unsubscribe(self, form_post):
         phone_number = form_post['UserIdentifier']
-        alerts_repo.delete_alert(phone_number)
+        self.alerts_repo.delete_alert(phone_number)
 
     def say_goodbye(self):
         return {
@@ -200,10 +203,10 @@ class TwilioBot:
                 )
             )
         except TwilioClientException:
-            raise TwilioBotException(f'Failed to send reminder for phone number: {phone_number}')
+            raise ReminderBotException(f'Failed to send reminder for phone number: {phone_number}')
 
         return message
 
 
-class TwilioBotException(Exception):
+class ReminderBotException(Exception):
     pass
