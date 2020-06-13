@@ -1,5 +1,5 @@
 from datetime import datetime
-from api.wsgi import app
+from wsgi import app
 from api.repo import AlertsRepo
 from lib.twilio import TwilioBot, TwilioBotException
 from lib.collect import CollectNextAlert

@@ -56,9 +56,10 @@ custom:
       custom_domain: ''
   # WSGI Plugin: https://github.com/logandk/serverless-wsgi
   wsgi:
-    app: api/wsgi.app
+    app: src/wsgi.app
     pythonBin: python3
     packRequirements: false
+  # DynamoDB Local Plugin: https://github.com/99xt/serverless-dynamodb-local
   dynamodb:
     # We are using a separate container for this
     # https://github.com/99xt/serverless-dynamodb-local/issues/57#issuecomment-507005352
@@ -90,9 +91,7 @@ package:
   individually: false
   include:
     - '!./**'
-    - 'api/**'
-    - 'lib/**'
-    - 'functions/**'
+    - 'src/**'
   exclude:
     - '**'
 
@@ -111,7 +110,7 @@ functions:
       BOT_SMS_NUMBER: ${self:custom.stage_vars.${self:provider.stage}.bot_sms_number}
       API_GATEWAY_BASE_PATH: ${self:provider.stage}
   poller:
-    handler: functions/poller.lambda_handler
+    handler: src/poller.lambda_handler
     events:
       # Every 5th minute past every hour from 13 through 17 (UTC) on every day-of-week from Monday through Friday.
       - schedule: cron(*/5 13-17 ? * MON-FRI *)
