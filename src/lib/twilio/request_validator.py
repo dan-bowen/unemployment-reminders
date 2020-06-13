@@ -44,8 +44,7 @@ def validate_twilio_request(f):
         api_gateway_base_path = current_app.config['API_GATEWAY_BASE_PATH']
         if api_gateway_base_path:
             # Strip N chars from beginning of path.
-            # +1 accounts for a leading /slash since API_GATEWAY_BASE_PATH does not have it
-            chars_to_strip = len(api_gateway_base_path) + 1
+            chars_to_strip = len(f"/{api_gateway_base_path}")
             new_path = twilio_url_parts.path[chars_to_strip:]
             twilio_url_parts = twilio_url_parts._replace(path=new_path)
 
