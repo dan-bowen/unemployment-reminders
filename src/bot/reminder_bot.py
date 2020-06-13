@@ -2,14 +2,14 @@ import json
 import pytz
 from datetime import datetime, timezone, time
 from lib.twilio import TwilioClient, TwilioClientException
-from lib.collect import CollectNextAlert
-from lib.repo import AlertsRepo
+from .collect import CollectNextAlert
+from .repo import AlertsRepo
 
 alerts_repo = AlertsRepo()
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
-class TwilioBot:
+class ReminderBot:
     # TODO actually ask the user for these
     default_timezone = 'America/Chicago'
     default_alert_time = '09:30:00'
@@ -205,5 +205,5 @@ class TwilioBot:
         return message
 
 
-class TwilioBotException(Exception):
+class ReminderBotException(Exception):
     pass
