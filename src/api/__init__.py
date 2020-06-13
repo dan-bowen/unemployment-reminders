@@ -3,7 +3,7 @@ Main application package.
 """
 
 from flask import Flask
-from .config import get_config
+from lib.config import get_config
 from .extension import dynamo_client
 from .blueprint import ping, twilio
 
