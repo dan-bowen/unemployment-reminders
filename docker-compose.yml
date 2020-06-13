@@ -4,14 +4,14 @@ services: # containers. same as `docker run`
 
   api:                                # a friendly name. this is also a DNS name inside network
     build:                            # Optional, build context for `docker build`
-      context: ./services/api
-    image: unemployment-reminders-api:latest       # Optional, if you use `build` this will be the name of the built image
+      context: .
+    image: unemployment-reminders:latest       # Optional, if you use `build` this will be the name of the built image
     env_file:
-      - ./services/api/.env
+      - .env
     ports:                            # Optional, same as -p in `docker container run`
       - '5000:5000'
     volumes:                          # Optional, same as -v in `docker container run`
-      - ./services/api:/usr/local/src/reminders
+      - ./:/usr/local/src/reminders
       - /usr/local/src/reminders/node_modules/
       - ~/.aws:/root/.aws
     networks:
