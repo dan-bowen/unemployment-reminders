@@ -3,7 +3,7 @@ import pytz
 from datetime import datetime, timezone, time
 from lib.twilio import TwilioClient, TwilioClientException
 from lib.collect import CollectNextAlert
-from api.repo import AlertsRepo
+from lib.repo import AlertsRepo
 
 alerts_repo = AlertsRepo()
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
