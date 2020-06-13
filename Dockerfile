@@ -28,7 +28,7 @@ RUN pip3 install -r requirements.txt
 COPY requirements-dev.txt .
 RUN pip3 install -r requirements-dev.txt
 
-ENV FLASK_APP=api
+ENV FLASK_APP=src/api/wsgi.py
 
 # Copy source code
 COPY . .

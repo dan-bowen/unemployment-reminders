@@ -2,7 +2,7 @@
 # Makefile for Unemployment Reminders
 #
 
-.PHONY: help build start stop ssh-api
+.PHONY: help test build
 
 .DEFAULT_GOAL := help
 
@@ -19,6 +19,18 @@ start: ## Start the containers
 stop: ## Stop the containers
 	@docker-compose down
 
+test: ## Run unit tests
+	@docker-compose exec api bash -c \
+	    'FLASK_ENV="test" SECRET_KEY="" TWILIO_ACCOUNT_SID="invalid" TWILIO_AUTH_TOKEN="invalid" DYNAMODB_ENDPOINT="http://localhost:8000" AWS_DEFAULT_REGION="us-east-1" nose2 -v'
+
+lint: ## Lint python files
+	@docker-compose exec api bash -c \
+	    'flake8 ./src'
+
+clean: ## Clean python cache files
+	@find . -type f -name "*.py[co]" -delete
+	@find . -type d -name "__pycache__" -delete
+
 ssh-api: ## SSH to the api container
 	@docker-compose exec api bash
 
@@ -26,4 +38,4 @@ ngrok: ## API site over NGROK.
 	@ngrok http -host-header=rewrite -subdomain=unemployment-reminders localhost:5000
 
 invoke-poller:
-	@docker-compose exec api bash -c 'python-lambda-local -f lambda_handler functions/poller.py data/poller.event.json'
+	@docker-compose exec api bash -c 'python-lambda-local -f lambda_handler src/poller.py data/poller.event.json'
