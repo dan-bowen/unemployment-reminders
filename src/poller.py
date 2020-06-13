@@ -1,11 +1,11 @@
 from datetime import datetime
 from wsgi import app
-from lib.repo import AlertsRepo
-from lib.twilio import TwilioBot, TwilioBotException
-from lib.collect import CollectNextAlert
+from bot import ReminderBot, ReminderBotException
+from bot.repo import AlertsRepo
+from bot.collect import CollectNextAlert
 
 repo = AlertsRepo()
-bot = TwilioBot(app)
+bot = ReminderBot(app)
 
 
 def lambda_handler(event, context):
@@ -27,7 +27,7 @@ def send_sms(alerts):
             bot.say_reminder(alert['phone_number'])
             # only apply next alert if current alert is sent successfully
             apply_next_alert(alert)
-        except TwilioBotException as e:
+        except ReminderBotException as e:
             print(e)
     return alerts
 
