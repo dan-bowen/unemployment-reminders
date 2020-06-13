@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from boto3.dynamodb.conditions import Key
 from api.extension import dynamo_client
-from api.schema.alert import AlertSchema
+from lib.schema.alert import AlertSchema
 
 
 class AlertsRepo:

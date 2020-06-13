@@ -1,6 +1,6 @@
-from api.repo.alerts import AlertsRepo
 from flask import Blueprint
 import requests
+from lib.repo.alerts import AlertsRepo
 
 blueprint = Blueprint('ping', __name__)
 
