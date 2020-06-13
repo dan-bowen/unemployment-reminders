@@ -25,7 +25,7 @@ test: ## Run unit tests
 
 lint: ## Lint python files
 	@docker-compose exec api bash -c \
-	    'flake8'
+	    'flake8 ./src'
 
 clean: ## Clean python cache files
 	@find . -type f -name "*.py[co]" -delete
