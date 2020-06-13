@@ -2,7 +2,7 @@
 # Makefile for Unemployment Reminders
 #
 
-.PHONY: help build start stop ssh-api
+.PHONY: help test build
 
 .DEFAULT_GOAL := help
 
