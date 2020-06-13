@@ -1,3 +1,3 @@
-from lib.dynamo.client import DynamoClient
+from bot import ReminderBot
 
-dynamo_client = DynamoClient()
+bot = ReminderBot()

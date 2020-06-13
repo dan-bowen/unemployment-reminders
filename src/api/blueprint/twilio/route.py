@@ -1,6 +1,6 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request
 from lib.twilio import validate_twilio_request
-from bot import ReminderBot
+from api.extension import bot
 
 blueprint = Blueprint('twilio', __name__)
 
@@ -14,7 +14,6 @@ def ping():
 
 @blueprint.route('/bot/say-intro', methods=['POST'])
 def say_intro():
-    bot = ReminderBot(app=current_app)
     bot.say_intro(request.form['phone_number'])
     return {}
 
@@ -22,21 +21,18 @@ def say_intro():
 @blueprint.route('/bot/ask-next-alert', methods=['POST'])
 @validate_twilio_request
 def ask_next_alert():
-    bot = ReminderBot(app=current_app)
     return bot.ask_next_alert()
 
 
 @blueprint.route('/bot/validate-next-alert', methods=['POST'])
 @validate_twilio_request
 def validate_next_alert():
-    bot = ReminderBot(app=current_app)
     return bot.validate_next_alert(request.form)
 
 
 @blueprint.route('/bot/say-thanks', methods=['POST'])
 @validate_twilio_request
 def subscribe():
-    bot = ReminderBot(app=current_app)
     bot.collect_next_alert(request.form)
     phone_number = request.form['UserIdentifier']
     bot.collect_phone_number(phone_number)
@@ -47,7 +43,6 @@ def subscribe():
 @blueprint.route('/bot/unsubscribe', methods=['POST'])
 @validate_twilio_request
 def unsubscribe():
-    bot = ReminderBot(app=current_app)
     bot.unsubscribe(request.form)
     return bot.say_goodbye()
 
@@ -55,7 +50,6 @@ def unsubscribe():
 @blueprint.route('/bot/found-a-job', methods=['POST'])
 @validate_twilio_request
 def found_a_job():
-    bot = ReminderBot(app=current_app)
     bot.unsubscribe(request.form)
     return bot.say_congrats()
 
@@ -63,5 +57,4 @@ def found_a_job():
 @blueprint.route('/bot/fallback', methods=['POST'])
 @validate_twilio_request
 def fallback():
-    bot = ReminderBot(app=current_app)
     return bot.say_fallback()
