@@ -4,14 +4,13 @@ from datetime import datetime, timezone, time
 from config import config
 from lib.twilio import TwilioClient, TwilioClientException
 from .collect import CollectNextAlert
-from .repo import AlertsRepo
+from .repo import alerts
 
 
 twilio_client = TwilioClient(
     config.SECRETS.TWILIO_ACCOUNT_SID,
     config.SECRETS.TWILIO_AUTH_TOKEN
 )
-alerts_repo = AlertsRepo()
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
@@ -116,7 +115,7 @@ class ReminderBot:
         return alert_model
 
     def subscribe(self):
-        alerts_repo.create_alert(self.create_alert_model())
+        alerts.create_alert(self.create_alert_model())
 
     def say_thanks(self):
         alert_model = self.create_alert_model()
@@ -138,7 +137,7 @@ class ReminderBot:
 
     def unsubscribe(self, form_post):
         phone_number = form_post['UserIdentifier']
-        alerts_repo.delete_alert(phone_number)
+        alerts.delete_alert(phone_number)
 
     def say_goodbye(self):
         return {
