@@ -3,8 +3,7 @@ Main application package.
 """
 
 from flask import Flask
-from lib.config import get_config
-from .extension import bot
+from config import config
 from .blueprint import ping, twilio
 
 
@@ -17,12 +16,7 @@ def create_app():
     """
 
     app = Flask(__name__)
-
-    # load config for the environment
-    config_object = get_config()
-
-    # configure the app
-    app.config.from_object(config_object)
+    app.config.from_object(config)
 
     register_extensions(app)
     register_blueprints(app)
@@ -37,7 +31,7 @@ def register_extensions(app):
     :param app:
     :return:
     """
-    bot.init_app(app)
+    pass
 
 
 def register_blueprints(app):
@@ -47,6 +41,5 @@ def register_blueprints(app):
     :param app:
     :return:
     """
-
     app.register_blueprint(ping.blueprint)
     app.register_blueprint(twilio.blueprint)

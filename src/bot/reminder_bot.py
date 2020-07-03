@@ -1,11 +1,17 @@
 import json
 import pytz
 from datetime import datetime, timezone, time
+from config import config
 from lib.twilio import TwilioClient, TwilioClientException
-from lib.dynamo.client import DynamoClient
 from .collect import CollectNextAlert
 from .repo import AlertsRepo
 
+
+twilio_client = TwilioClient(
+    config.SECRETS.TWILIO_ACCOUNT_SID,
+    config.SECRETS.TWILIO_AUTH_TOKEN
+)
+alerts_repo = AlertsRepo()
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
 
 
@@ -14,32 +20,15 @@ class ReminderBot:
     default_timezone = 'America/Chicago'
     default_alert_time = '09:30:00'
 
-    def __init__(self, app=None):
-        self.app = app
-
-        self.base_url = None
-        self.sms_number = None
-        self.twilio_client = None
-        self.alerts_repo = None
+    def __init__(self):
+        self.base_url = config.BOT_BASE_URL
+        self.sms_number = config.BOT_SMS_NUMBER
         self.collected_next_alert = None
         self.collected_phone_number = None
 
-        if app is not None:
-            self.init_app(app)
-
-    def init_app(self, app):
-        self.base_url = app.config['BOT_BASE_URL']
-        self.sms_number = app.config['BOT_SMS_NUMBER']
-        self.twilio_client = TwilioClient(
-            app.config['SECRETS'].TWILIO_ACCOUNT_SID,
-            app.config['SECRETS'].TWILIO_AUTH_TOKEN
-        )
-
-        self.alerts_repo = AlertsRepo(DynamoClient(app.config['DYNAMODB_ENDPOINT']))
-
     def say_intro(self, phone_number):
         try:
-            message = self.twilio_client.send_sms(
+            message = twilio_client.send_sms(
                 to=phone_number,
                 from_=self.sms_number,
                 body=(
@@ -127,7 +116,7 @@ class ReminderBot:
         return alert_model
 
     def subscribe(self):
-        self.alerts_repo.create_alert(self.create_alert_model())
+        alerts_repo.create_alert(self.create_alert_model())
 
     def say_thanks(self):
         alert_model = self.create_alert_model()
@@ -149,7 +138,7 @@ class ReminderBot:
 
     def unsubscribe(self, form_post):
         phone_number = form_post['UserIdentifier']
-        self.alerts_repo.delete_alert(phone_number)
+        alerts_repo.delete_alert(phone_number)
 
     def say_goodbye(self):
         return {
@@ -191,7 +180,7 @@ class ReminderBot:
 
     def say_reminder(self, phone_number):
         try:
-            message = self.twilio_client.send_sms(
+            message = twilio_client.send_sms(
                 to=phone_number,
                 from_=self.sms_number,
                 body=(

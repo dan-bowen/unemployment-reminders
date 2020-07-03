@@ -1,14 +1,12 @@
 import json
 import unittest
-import helpers
 from bot import ReminderBot
 
 
 class BotTests(unittest.TestCase):
 
     def setUp(self):
-        self.helper = helpers.Helper()
-        self.bot = ReminderBot(app=self.helper.app)
+        self.bot = ReminderBot()
 
     def tearDown(self):
         pass
