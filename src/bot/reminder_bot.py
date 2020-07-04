@@ -6,12 +6,15 @@ from lib.twilio import TwilioClient, TwilioClientException
 from .collect import CollectNextAlert
 from .repo import alerts
 
-
 twilio_client = TwilioClient(
     config.SECRETS.TWILIO_ACCOUNT_SID,
     config.SECRETS.TWILIO_AUTH_TOKEN
 )
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
+
+
+def get_utc_now():
+    return datetime.now(timezone.utc)
 
 
 class ReminderBot:
@@ -22,8 +25,25 @@ class ReminderBot:
     def __init__(self):
         self.base_url = config.BOT_BASE_URL
         self.sms_number = config.BOT_SMS_NUMBER
-        self.collected_next_alert = None
-        self.collected_phone_number = None
+        self.inbound_message = None
+
+    def receive_message(self, form_post):
+        """Receive message from Twilio-Autopilot"""
+
+        # form_post is an ImmutableDict so we assemble our own return dict
+        self.inbound_message = {
+            'CurrentTask':           form_post.get('CurrentTask'),
+            'CurrentInput':          form_post.get('CurrentInput'),
+            'Channel':               form_post.get('Channel'),
+            'NextBestTask':          form_post.get('NextBestTask'),
+            'CurrentTaskConfidence': form_post.get('CurrentTaskConfidence'),
+            'AssistantSid':          form_post.get('AssistantSid'),
+            'AccountSid':            form_post.get('AccountSid'),
+            'UserIdentifier':        form_post.get('UserIdentifier'),
+            'DialoguePayloadUrl':    form_post.get('DialoguePayloadUrl'),
+            # Memory is a JSON string so we extract it here
+            'Memory':                json.loads(form_post.get('Memory'))
+        }
 
     def say_intro(self, phone_number):
         try:
@@ -84,27 +104,18 @@ class ReminderBot:
             ]
         }
 
-    def collect_next_alert(self, form_post):
-        """Collects certification date from Twilio POST"""
-        memory = json.loads(form_post.get('Memory'))
-        answers = memory['twilio']['collected_data']['next_alert_date']['answers']
-
-        self.collected_next_alert = answers['next_alert_date']['answer']
-
-    def validate_next_alert(self, form_post):
-        is_valid = CollectNextAlert(form_post['CurrentInput']).is_valid
+    def validate_next_alert(self):
+        is_valid = CollectNextAlert(self.inbound_message['CurrentInput']).is_valid
         return {'valid': is_valid}
 
-    def collect_phone_number(self, phone_number):
-        self.collected_phone_number = phone_number
-
     def create_alert_model(self):
-        now = datetime.now(timezone.utc)
-        next_alert = CollectNextAlert(self.collected_next_alert,
+        now = get_utc_now()
+        answers = self.inbound_message['Memory']['twilio']['collected_data']['next_alert_date']['answers']
+        next_alert = CollectNextAlert(answers['next_alert_date']['answer'],
                                       timezone=self.default_timezone,
                                       alert_time=self.default_alert_time)
 
-        alert_model = dict(phone_number=self.collected_phone_number,
+        alert_model = dict(phone_number=self.inbound_message['UserIdentifier'],
                            timezone=self.default_timezone,
                            alert_time=self.default_alert_time,
                            next_alert_at=next_alert.next_alert_at(now).isoformat(),
@@ -135,9 +146,8 @@ class ReminderBot:
             ]
         }
 
-    def unsubscribe(self, form_post):
-        phone_number = form_post['UserIdentifier']
-        alerts.delete_alert(phone_number)
+    def unsubscribe(self):
+        alerts.delete_alert(self.inbound_message['UserIdentifier'])
 
     def say_goodbye(self):
         return {
@@ -145,7 +155,7 @@ class ReminderBot:
                 {
                     'say': (
                         f"You have been unsubscribed from all messages.\n\n"
-                        f"Reply START, or UNTSOP to restart messages."
+                        f"Reply START, or UNTSOP to restart messages.\n\n"
                         f"{message_footer}"
                     )
                 }
