@@ -23,6 +23,10 @@ test: ## Run unit tests
 	@docker-compose exec api bash -c \
 	    'FLASK_ENV="test" SECRET_KEY="" TWILIO_ACCOUNT_SID="invalid" TWILIO_AUTH_TOKEN="invalid" DYNAMODB_ENDPOINT="http://localhost:8000" AWS_DEFAULT_REGION="us-east-1" nose2 -v'
 
+coverage: ## Generate unit test code coverage report
+	@docker-compose exec api bash -c \
+	    'FLASK_ENV="test" SECRET_KEY="" TWILIO_ACCOUNT_SID="invalid" TWILIO_AUTH_TOKEN="invalid" DYNAMODB_ENDPOINT="http://localhost:8000" AWS_DEFAULT_REGION="us-east-1" coverage run -m nose2 -v && coverage html'
+
 lint: ## Lint python files
 	@docker-compose exec api bash -c \
 	    'flake8 ./src'
