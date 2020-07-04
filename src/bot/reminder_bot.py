@@ -1,6 +1,4 @@
 import json
-import pytz
-from datetime import datetime, time
 from config import config
 from lib.twilio import TwilioClient, TwilioClientException
 from .collect import CollectNextAlert
@@ -124,15 +122,15 @@ class ReminderBot:
         alerts.create_alert(self.create_alert_model())
 
     def say_thanks(self):
-        alert_model = self.create_alert_model()
-        next_alert = datetime.fromisoformat(alert_model['next_alert_at'])
-        default_timezone = pytz.timezone(self.default_timezone)
-        formatted_date = next_alert.astimezone(default_timezone).strftime('%A, %B %d at %I:%M %p')
+        answers = self.inbound_message['Memory']['twilio']['collected_data']['next_alert_date']['answers']
+        next_alert = CollectNextAlert(answers['next_alert_date']['answer'],
+                                      timezone=self.default_timezone,
+                                      alert_time=self.default_alert_time)
         return {
             'actions': [
                 {
                     'say': (
-                        f"Okay great. I'll remind you on {formatted_date} and every two weeks after that.\n\n"
+                        f"Okay great. I'll remind you on {next_alert.formatted_date} and every two weeks after that.\n\n"
                         f"Found a job?\n\n"
                         f"Reply FOUND A JOB to cancel the reminder.\n\n"
                         f"{message_footer}"

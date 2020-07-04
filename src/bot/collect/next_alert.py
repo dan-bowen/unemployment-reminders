@@ -52,6 +52,12 @@ class CollectNextAlert:
         self._raise_invalid()
         return self.matches.group('day_of_week').lower()
 
+    @property
+    def formatted_date(self):
+        next_alert = self.next_alert_at()
+        default_timezone = pytz.timezone(self.timezone)
+        return next_alert.astimezone(default_timezone).strftime('%A, %B %d at %I:%M %p')
+
     def next_alert_at(self):
         """
         Get date of next alert
