@@ -12,7 +12,7 @@ class BotTests(TestCase):
     def tearDown(self):
         pass
 
-    @mock.patch('bot.reminder_bot.get_utc_now', return_value=datetime.fromisoformat('2020-06-01T10:00:00+00:00'))
+    @mock.patch('bot.collect.next_alert.get_utc_now', return_value=datetime.fromisoformat('2020-06-01T10:00:00+00:00'))
     def test_create_alert_model(self, mock_utc_now):
         """Generate the alert model to insert into data store"""
         form_post = {
