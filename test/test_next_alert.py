@@ -1,9 +1,9 @@
-import unittest
+from unittest import TestCase, mock
 from datetime import datetime
 from bot.collect import CollectNextAlert, CollectException
 
 
-class NextAlertTests(unittest.TestCase):
+class NextAlertTests(TestCase):
 
     def setUp(self):
         pass
@@ -37,52 +37,54 @@ class NextAlertTests(unittest.TestCase):
                     'MoNdaY', 'TueSdaY', 'WednEsdaY', 'ThurSdaY', 'FriDaY'):
             self.assertEqual(CollectNextAlert(day).day_of_week, day.lower())
 
-    def test_next_alert_this_weekday(self):
+    @mock.patch('bot.collect.next_alert.get_utc_now')
+    def test_next_alert_this_weekday(self, mock_utc_now):
         cert_date = CollectNextAlert('monday', timezone='America/Chicago', alert_time='10:30:00')
 
         # monday, June 1
-        local_now = datetime.fromisoformat('2020-06-01T10:00:00-05:00')
-        actual = cert_date.next_alert_at(local_now)
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-01T10:00:00-05:00')
+        actual = cert_date.next_alert_at()
         # monday, June 8
         expected = datetime.fromisoformat('2020-06-08T15:30:00+00:00')
         self.assertEqual(actual, expected)
 
         # tuesday, June 2
-        local_now = datetime.fromisoformat('2020-06-02T10:00:00-05:00')
-        actual = cert_date.next_alert_at(local_now)
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-02T10:00:00-05:00')
+        actual = cert_date.next_alert_at()
         # monday, June 8
         expected = datetime.fromisoformat('2020-06-08T15:30:00+00:00')
         self.assertEqual(actual, expected)
 
         # monday, June 8
-        local_now = datetime.fromisoformat('2020-06-08T10:00:00-05:00')
-        actual = cert_date.next_alert_at(local_now)
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-08T10:00:00-05:00')
+        actual = cert_date.next_alert_at()
         # monday, June 15
         expected = datetime.fromisoformat('2020-06-15T15:30:00+00:00')
         self.assertEqual(actual, expected)
 
-    def test_next_alert_next_weekday(self):
+    @mock.patch('bot.collect.next_alert.get_utc_now')
+    def test_next_alert_next_weekday(self, mock_utc_now):
         cert_date = CollectNextAlert('next monday', timezone='America/Chicago', alert_time='10:30:00')
 
         # monday, June 1
-        local_now = datetime.fromisoformat('2020-06-01T10:00:00-05:00')
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-01T10:00:00-05:00')
         # print(local_now.isoformat())
-        actual = cert_date.next_alert_at(local_now)
+        actual = cert_date.next_alert_at()
         # monday, June 15
         expected = datetime.fromisoformat('2020-06-15T15:30:00+00:00')
         # print(expected.isoformat())
         self.assertEqual(actual, expected)
 
         # tuesday, June 2
-        local_now = datetime.fromisoformat('2020-06-02T10:00:00-05:00')
-        actual = cert_date.next_alert_at(local_now)
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-02T10:00:00-05:00')
+        actual = cert_date.next_alert_at()
         # monday, June 15
         expected = datetime.fromisoformat('2020-06-15T15:30:00+00:00')
         self.assertEqual(actual, expected)
 
         # monday, June 8
-        local_now = datetime.fromisoformat('2020-06-08T10:00:00-05:00')
-        actual = cert_date.next_alert_at(local_now)
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-08T10:00:00-05:00')
+        actual = cert_date.next_alert_at()
         # monday, June 22
         expected = datetime.fromisoformat('2020-06-22T15:30:00+00:00')
         self.assertEqual(actual, expected)

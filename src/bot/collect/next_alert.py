@@ -1,8 +1,17 @@
 import re
 import pytz
-from datetime import datetime, time
+from datetime import datetime, timezone, time
 from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR
 from .exceptions import CollectException
+
+
+def get_utc_now():
+    """
+    Get current time in UTC
+
+    :return: Timezone aware datetime
+    """
+    return datetime.now(timezone.utc)
 
 
 class CollectNextAlert:
@@ -43,16 +52,15 @@ class CollectNextAlert:
         self._raise_invalid()
         return self.matches.group('day_of_week').lower()
 
-    def next_alert_at(self, now):
+    def next_alert_at(self):
         """
         Get date of next alert
 
         SEE https://howchoo.com/g/ywi5m2vkodk/working-with-datetime-objects-and-timezones-in-python
 
-        :param now: Timezone aware datetime
-        :type now: datetime.datetime
         :return: Timezone aware (UTC) datetime object
         """
+        now = get_utc_now()
         local_now = now.astimezone(pytz.timezone(self.timezone))
         day_of_week = self.weekdays.get(self.day_of_week)
 

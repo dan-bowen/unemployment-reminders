@@ -1,6 +1,6 @@
 import json
 import pytz
-from datetime import datetime, timezone, time
+from datetime import datetime, time
 from config import config
 from lib.twilio import TwilioClient, TwilioClientException
 from .collect import CollectNextAlert
@@ -11,10 +11,6 @@ twilio_client = TwilioClient(
     config.SECRETS.TWILIO_AUTH_TOKEN
 )
 message_footer = "Thanks for using my app.\nhttps://www.crucialwebstudio.com"
-
-
-def get_utc_now():
-    return datetime.now(timezone.utc)
 
 
 class ReminderBot:
@@ -109,7 +105,6 @@ class ReminderBot:
         return {'valid': is_valid}
 
     def create_alert_model(self):
-        now = get_utc_now()
         answers = self.inbound_message['Memory']['twilio']['collected_data']['next_alert_date']['answers']
         next_alert = CollectNextAlert(answers['next_alert_date']['answer'],
                                       timezone=self.default_timezone,
@@ -118,7 +113,7 @@ class ReminderBot:
         alert_model = dict(phone_number=self.inbound_message['UserIdentifier'],
                            timezone=self.default_timezone,
                            alert_time=self.default_alert_time,
-                           next_alert_at=next_alert.next_alert_at(now).isoformat(),
+                           next_alert_at=next_alert.next_alert_at().isoformat(),
                            in_progress=0,
                            alert_day=next_alert.day_of_week
                            )
