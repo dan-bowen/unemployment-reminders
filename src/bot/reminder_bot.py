@@ -24,7 +24,7 @@ class ReminderBot:
     def receive_message(self, form_post):
         """Receive message from Twilio-Autopilot"""
 
-        # form_post is an ImmutableDict so we assemble our own return dict
+        # form_post is an ImmutableDict so we assemble our own
         self.inbound_message = {
             'CurrentTask':           form_post.get('CurrentTask'),
             'CurrentInput':          form_post.get('CurrentInput'),

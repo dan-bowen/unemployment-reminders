@@ -12,8 +12,10 @@ class BotTests(TestCase):
     def tearDown(self):
         pass
 
-    @mock.patch('bot.collect.next_alert.get_utc_now', return_value=datetime.fromisoformat('2020-06-01T10:00:00+00:00'))
+    @mock.patch('bot.collect.next_alert.get_utc_now')
     def test_create_alert_model(self, mock_utc_now):
+        mock_utc_now.return_value = datetime.fromisoformat('2020-06-01T10:00:00+00:00')
+
         """Generate the alert model to insert into data store"""
         form_post = {
             'CurrentTask': 'remind_me',
@@ -54,6 +56,34 @@ class BotTests(TestCase):
         }
         actual = self.bot.create_alert_model()
         self.assertEqual(expected, actual)
+
+    @mock.patch('bot.reminder_bot.twilio_client.send_sms')
+    def test_say_intro(self, mock_create_message):
+        expected_sid = 'SM87105da94bff44b999e4e6eb90d8eb6a'
+        expected_error_code = None
+
+        mock_create_message.return_value.sid = expected_sid
+        mock_create_message.return_value.error_code = expected_error_code
+
+        actual = self.bot.say_intro('+17735551234')
+
+        self.assertTrue(mock_create_message.called)
+        self.assertEqual(expected_sid, actual.sid)
+        self.assertEqual(expected_error_code, actual.error_code)
+
+    @mock.patch('bot.reminder_bot.twilio_client.send_sms')
+    def test_say_reminder(self, mock_create_message):
+        expected_sid = 'SM87105da94bff44b999e4e6eb90d8eb6a'
+        expected_error_code = None
+
+        mock_create_message.return_value.sid = expected_sid
+        mock_create_message.return_value.error_code = expected_error_code
+
+        actual = self.bot.say_reminder('+17735551234')
+
+        self.assertTrue(mock_create_message.called)
+        self.assertEqual(expected_sid, actual.sid)
+        self.assertEqual(expected_error_code, actual.error_code)
 
 
 if __name__ == "__main__":
