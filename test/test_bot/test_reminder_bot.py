@@ -3,9 +3,7 @@ from datetime import datetime
 from unittest import TestCase, mock
 from bot import ReminderBot
 
-
-class BotTests(TestCase):
-    twilio_request_prototype = {
+twilio_request_prototype = {
             'CurrentTask':           'remind_me',
             'CurrentInput':          'Remind me ',
             'Channel':               'sms',
@@ -35,6 +33,8 @@ class BotTests(TestCase):
             })
         }
 
+
+class BotTests(TestCase):
     def setUp(self):
         self.bot = ReminderBot()
 
@@ -46,7 +46,7 @@ class BotTests(TestCase):
         """Generate the alert model to insert into data store"""
         mock_utc_now.return_value = datetime.fromisoformat('2020-06-01T10:00:00+00:00')
 
-        self.bot.receive_message(self.twilio_request_prototype)
+        self.bot.receive_message(twilio_request_prototype)
 
         expected = {
             'phone_number':  '+17735551234',
@@ -88,9 +88,30 @@ class BotTests(TestCase):
         self.assertEqual(expected_sid, actual.sid)
         self.assertEqual(expected_error_code, actual.error_code)
 
+    def test_next_alert_valid(self):
+        # change the form post to something valid
+        form_post = twilio_request_prototype
+        form_post['CurrentInput'] = 'Monday'
+
+        self.bot.receive_message(form_post)
+        expected = {'valid': True}
+        actual = self.bot.validate_next_alert()
+
+        self.assertEqual(expected, actual)
+
+    def test_next_alert_invalid(self):
+        # change the form post to something invalid
+        form_post = twilio_request_prototype
+        form_post['CurrentInput'] = 'this is wrong'
+        self.bot.receive_message(form_post)
+        expected = {'valid': False}
+        actual = self.bot.validate_next_alert()
+
+        self.assertEqual(expected, actual)
+
     @mock.patch('bot.reminder_bot.alerts.create_alert')
     def test_subscribe(self, mock_create_alert):
-        self.bot.receive_message(self.twilio_request_prototype)
+        self.bot.receive_message(twilio_request_prototype)
         actual = self.bot.subscribe()
 
         self.assertTrue(mock_create_alert.called)
@@ -98,7 +119,7 @@ class BotTests(TestCase):
 
     @mock.patch('bot.reminder_bot.alerts.delete_alert')
     def test_unsubscribe(self, mock_delete_alert):
-        self.bot.receive_message(self.twilio_request_prototype)
+        self.bot.receive_message(twilio_request_prototype)
         actual = self.bot.unsubscribe()
 
         self.assertTrue(mock_delete_alert.called)
