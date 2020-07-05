@@ -1,37 +1,38 @@
 import json
 from datetime import datetime
 from unittest import TestCase, mock
-from bot import ReminderBot
+from lib.twilio import TwilioClientException
+from bot import ReminderBot, ReminderBotException
 
 twilio_request_prototype = {
-            'CurrentTask':           'remind_me',
-            'CurrentInput':          'Remind me ',
-            'Channel':               'sms',
-            'NextBestTask':          '',
-            'CurrentTaskConfidence': '1.0',
-            'AssistantSid':          '{SOME_GUID}',
-            'AccountSid':            '{SOME_GUID}',
-            'UserIdentifier':        '+17735551234',
-            'DialoguePayloadUrl':    'https://autopilot.twilio.com/v1/Assistants/{GUID_1}/Dialogues/{GUID_2}',
-            'Memory':                json.dumps({
-                'twilio': {
-                    'sms':            {
-                        'To':         '+17735554321',
-                        'From':       '+17735551234',
-                        'MessageSid': '{SOME_GUID}'
-                    },
-                    'collected_data': {
+    'CurrentTask':           'remind_me',
+    'CurrentInput':          'Remind me ',
+    'Channel':               'sms',
+    'NextBestTask':          '',
+    'CurrentTaskConfidence': '1.0',
+    'AssistantSid':          '{SOME_GUID}',
+    'AccountSid':            '{SOME_GUID}',
+    'UserIdentifier':        '+17735551234',
+    'DialoguePayloadUrl':    'https://autopilot.twilio.com/v1/Assistants/{GUID_1}/Dialogues/{GUID_2}',
+    'Memory':                json.dumps({
+        'twilio': {
+            'sms':            {
+                'To':         '+17735554321',
+                'From':       '+17735551234',
+                'MessageSid': '{SOME_GUID}'
+            },
+            'collected_data': {
+                'next_alert_date': {
+                    'answers': {
                         'next_alert_date': {
-                            'answers': {
-                                'next_alert_date': {
-                                    'answer': 'next monday'
-                                }
-                            }
+                            'answer': 'next monday'
                         }
                     }
                 }
-            })
+            }
         }
+    })
+}
 
 
 class BotTests(TestCase):
@@ -43,7 +44,6 @@ class BotTests(TestCase):
 
     @mock.patch('bot.collect.next_alert.get_utc_now')
     def test_create_alert_model(self, mock_utc_now):
-        """Generate the alert model to insert into data store"""
         mock_utc_now.return_value = datetime.fromisoformat('2020-06-01T10:00:00+00:00')
 
         self.bot.receive_message(twilio_request_prototype)
@@ -75,6 +75,14 @@ class BotTests(TestCase):
         self.assertEqual(expected_error_code, actual.error_code)
 
     @mock.patch('bot.reminder_bot.twilio_client.send_sms')
+    def test_say_intro_raises_exception(self, mock_send_sms):
+        mock_send_sms.side_effect = ReminderBotException()
+
+        self.bot.receive_message(twilio_request_prototype)
+        with self.assertRaises(ReminderBotException):
+            self.bot.say_intro('+17735551234')
+
+    @mock.patch('bot.reminder_bot.twilio_client.send_sms')
     def test_say_reminder(self, mock_create_message):
         expected_sid = 'SM87105da94bff44b999e4e6eb90d8eb6a'
         expected_error_code = None
@@ -87,6 +95,21 @@ class BotTests(TestCase):
         self.assertTrue(mock_create_message.called)
         self.assertEqual(expected_sid, actual.sid)
         self.assertEqual(expected_error_code, actual.error_code)
+
+    @mock.patch('bot.reminder_bot.twilio_client.send_sms')
+    def test_say_reminder_raises_exception(self, mock_send_sms):
+        mock_send_sms.side_effect = ReminderBotException()
+
+        self.bot.receive_message(twilio_request_prototype)
+        with self.assertRaises(ReminderBotException):
+            self.bot.say_reminder('+17735551234')
+
+    def test_say_thanks(self):
+        self.bot.receive_message(twilio_request_prototype)
+        actual = self.bot.say_thanks()
+
+        # make sure 'say' is in the list of actions
+        self.assertTrue(any(x['say'] is not None for x in actual['actions']))
 
     def test_next_alert_valid(self):
         # change the form post to something valid
