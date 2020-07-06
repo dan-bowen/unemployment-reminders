@@ -54,6 +54,7 @@ class CollectNextAlert:
 
     @property
     def formatted_date(self):
+        self._raise_invalid()
         next_alert = self.next_alert_at()
         default_timezone = pytz.timezone(self.timezone)
         return next_alert.astimezone(default_timezone).strftime('%A, %B %d at %I:%M %p')
