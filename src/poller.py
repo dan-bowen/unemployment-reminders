@@ -1,9 +1,13 @@
+"""
+Lambda function that sends alerts
+
+Invoked via CloudWatch events on a schedule.
+"""
 from datetime import datetime
-from wsgi import app
 from bot import ReminderBot, ReminderBotException
 from bot.collect import CollectNextAlert
 
-bot = ReminderBot(app)
+bot = ReminderBot()
 
 
 def lambda_handler(event, context):
