@@ -142,19 +142,6 @@ class ReminderBot:
     def unsubscribe(self):
         alerts.delete_alert(self.inbound_message['UserIdentifier'])
 
-    def say_goodbye(self):
-        return {
-            'actions': [
-                {
-                    'say': (
-                        f"You have been unsubscribed from all messages.\n\n"
-                        f"Reply START, or UNTSOP to restart messages.\n\n"
-                        f"{message_footer}"
-                    )
-                }
-            ]
-        }
-
     def say_congrats(self):
         return {
             'actions': [

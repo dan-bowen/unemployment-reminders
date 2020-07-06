@@ -45,15 +45,6 @@ def subscribe():
     return bot.say_thanks()
 
 
-@blueprint.route('/bot/unsubscribe', methods=['POST'])
-@validate_twilio_request
-def unsubscribe():
-    bot = ReminderBot()
-    bot.receive_message(request.form)
-    bot.unsubscribe()
-    return bot.say_goodbye()
-
-
 @blueprint.route('/bot/found-a-job', methods=['POST'])
 @validate_twilio_request
 def found_a_job():
