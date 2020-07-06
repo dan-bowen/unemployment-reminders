@@ -2,9 +2,7 @@ from marshmallow import Schema, fields
 
 
 class AlertSchema(Schema):
-    """
-    The schema of an alert in DynamoDB
-    """
+    """The schema of an alert in DynamoDB"""
     phone_number = fields.Str()
     next_alert_at = fields.Str()
     in_progress = fields.Integer()

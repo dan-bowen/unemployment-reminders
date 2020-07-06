@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from lib.twilio import validate_twilio_request
 from bot import ReminderBot
 
-blueprint = Blueprint('twilio', __name__)
+blueprint = Blueprint('bot', __name__)
 
 
 @blueprint.route('/bot/ping', methods=['POST'])
@@ -43,15 +43,6 @@ def subscribe():
     bot.receive_message(request.form)
     bot.subscribe()
     return bot.say_thanks()
-
-
-@blueprint.route('/bot/unsubscribe', methods=['POST'])
-@validate_twilio_request
-def unsubscribe():
-    bot = ReminderBot()
-    bot.receive_message(request.form)
-    bot.unsubscribe()
-    return bot.say_goodbye()
 
 
 @blueprint.route('/bot/found-a-job', methods=['POST'])
