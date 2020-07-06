@@ -33,7 +33,6 @@ def delete_alert(phone_number):
             'phone_number': phone_number
         }
     )
-
     return response
 
 

@@ -24,6 +24,7 @@ class TwilioClient:
                 body=body
             )
         except TwilioRestException:
+            # TODO log this original exception for debugging
             raise TwilioClientException('Failed to send SMS')
 
         return message
