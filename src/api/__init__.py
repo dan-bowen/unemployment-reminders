@@ -4,7 +4,7 @@ Main application package.
 
 from flask import Flask
 from config import config
-from .blueprint import ping, twilio
+from .blueprint import bot
 
 
 def create_app():
@@ -41,5 +41,4 @@ def register_blueprints(app):
     :param app:
     :return:
     """
-    app.register_blueprint(ping.blueprint)
-    app.register_blueprint(twilio.blueprint)
+    app.register_blueprint(bot.blueprint)

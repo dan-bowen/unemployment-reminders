@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from lib.twilio import validate_twilio_request
 from bot import ReminderBot
 
-blueprint = Blueprint('twilio', __name__)
+blueprint = Blueprint('bot', __name__)
 
 
 @blueprint.route('/bot/ping', methods=['POST'])
