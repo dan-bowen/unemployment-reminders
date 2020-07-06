@@ -6,20 +6,26 @@ Invoked via CloudWatch events on a schedule.
 from datetime import datetime
 from bot import ReminderBot, ReminderBotException
 from bot.collect import CollectNextAlert
+from bot.repo import alerts as alerts_repo
 
 bot = ReminderBot()
 
 
 def lambda_handler(event, context):
-    pending_alerts = bot.alerts_repo.get_pending_alerts()
+    pending_alerts = alerts_repo.get_pending_alerts()
     in_progress_alerts = apply_in_progress(pending_alerts)
     sms_alerts = send_sms(in_progress_alerts)
     return pending_alerts
 
 
 def apply_in_progress(alerts):
+    """
+    Apply the in_progress flag to alerts
+
+    Prevents other processes from picking them up while being processed
+    """
     for alert in alerts:
-        bot.alerts_repo.set_in_progress(alert['phone_number'])
+        alerts_repo.set_in_progress(alert['phone_number'])
     return alerts
 
 
@@ -30,7 +36,9 @@ def send_sms(alerts):
             # only apply next alert if current alert is sent successfully
             apply_next_alert(alert)
         except ReminderBotException as e:
+            # TODO decide what to do here. Retry logic will depend on specific exception raised
             print(e)
+
     return alerts
 
 
@@ -41,4 +49,4 @@ def apply_next_alert(alert):
                                   timezone=alert['timezone'],
                                   alert_time=alert['alert_time'])
 
-    bot.alerts_repo.set_next_alert(alert['phone_number'], next_alert.next_alert_at(now).isoformat())
+    alerts_repo.set_next_alert(alert['phone_number'], next_alert.next_alert_at(now).isoformat())

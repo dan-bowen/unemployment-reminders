@@ -59,15 +59,16 @@ class CollectNextAlert:
         default_timezone = pytz.timezone(self.timezone)
         return next_alert.astimezone(default_timezone).strftime('%A, %B %d at %I:%M %p')
 
-    def next_alert_at(self):
+    def next_alert_at(self, now=None):
         """
         Get date of next alert
 
         SEE https://howchoo.com/g/ywi5m2vkodk/working-with-datetime-objects-and-timezones-in-python
 
+        :param now: Timezone aware datetime object
         :return: Timezone aware (UTC) datetime object
         """
-        now = get_utc_now()
+        now = now if now is not None else get_utc_now()
         local_now = now.astimezone(pytz.timezone(self.timezone))
         day_of_week = self.weekdays.get(self.day_of_week)
 
