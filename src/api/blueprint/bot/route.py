@@ -15,7 +15,6 @@ def ping():
 @blueprint.route('/bot/say-intro', methods=['POST'])
 def say_intro():
     bot = ReminderBot()
-    bot.receive_message(request.form)
     bot.say_intro(request.form['phone_number'])
     return {}
 
