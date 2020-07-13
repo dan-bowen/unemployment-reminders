@@ -47,7 +47,7 @@ class ReminderBot:
                 body=(
                     f"Welcome to the Unemployment Reminders chatbot. Here are a few commands you can use.\n\n"
                     f"REMIND ME to set or change a reminder.\n\n"
-                    f"FOUND A JOB to cancel the remidner."
+                    f"FOUND A JOB to cancel the reminder."
                 )
             )
         except TwilioClientException:
