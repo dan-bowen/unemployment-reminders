@@ -1,0 +1,13 @@
+{
+  "name": "reminders-api",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless": "^1.68.0",
+    "serverless-domain-manager": "^4.1.1",
+    "serverless-dynamodb-local": "^0.2.39",
+    "serverless-python-requirements": "^5.1.0",
+    "serverless-wsgi": "^1.7.4"
+  }
+}

@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Base stack for unemployment reminders app
+Parameters:
+  ApplicationEnv:
+    Type: String
+    Description: "Application environment: dev|stage|prod"
+    Default: dev
+    AllowedValues:
+      - dev
+      - stage
+      - prod
+    ConstraintDescription: Must be a valid application environment
+Resources:
+  Secrets:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub reminders/app/${ApplicationEnv}
+      Description: Secrets for unemployment reminders app
+      SecretString: '{"SECRET_KEY":"", "TWILIO_AUTH_TOKEN":"", "TWILIO_ACCOUNT_SID":""}'
+Outputs:
+  SecretsArn:
+    Description: ARN of the secrets
+    Value: !Ref Secrets
+    Export:
+      Name: !Sub unemployment-reminders-${ApplicationEnv}:SecretsArn
