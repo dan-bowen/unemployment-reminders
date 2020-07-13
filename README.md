@@ -2,7 +2,7 @@
 
 Send yourself a Twilio SMS reminder on your unemployment certification date.
 
-![screenshot](docs/unemployment-reminders-screenshot.png)
+![screenshot](./docs/unemployment-reminders-screenshot.png)
 
 #### Disclaimer
 
