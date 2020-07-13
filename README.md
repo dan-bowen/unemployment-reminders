@@ -2,12 +2,12 @@
 
 Send yourself a Twilio SMS reminder on your unemployment certification date.
 
-![screenshot](./docs/unemployment-reminders-screenshot.jpg)
-
 #### Disclaimer
 
 This application is for demo purposes only. It is not affiliated with or endorsed by the 
 Illinois Department of Employment Security.
+
+![screenshot](./docs/unemployment-reminders-screenshot.jpg)
 
 # Blog Post
 
