@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/crucialwebstudio/unemployment-reminders.svg?style=shield)](https://circleci.com/gh/crucialwebstudio/unemployment-reminders)
-
 # Unemployment Reminders
 
 Send yourself a Twilio SMS reminder on your unemployment certification date.
