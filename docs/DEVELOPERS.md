@@ -3,32 +3,46 @@
 ## Prerequisites
 
 - docker desktop
-- docker compose
+- `docker-compose`
+- node.js
 - aws cli
 
 You'll need a Twilio account as well as an Autopilot chatbot configured.
 
 ## Application Setup
 
-1. Rename `.env.dist` to `.env` and enter your values.
-1. Rename `serverless.dist.yml` to `serverless.yml` and enter your values.
-1. Run `make start` to start the containers.
-1. Run `make help` to explore other commands.
+```shell
+
+# Copy the env file and enter your values
+cp .env.dist .env
+vi .env
+
+
+# Copy serverless file and enter your values
+cp serverless.dist.yml serverless.yml
+vi serverless.yml
+
+
+# Set up Node
+npm install -g serverless
+npm install
+
+# Start the containers
+make start
+
+# Migrations
+make seed
+
+# Explore other Make commands
+make help
+```
 
 # Deployments
 
-Deployments are done via the [Serverless Framework](https://www.serverless.com/). With 
-containers running execute the following commands:
+Deployments are done via the [Serverless Framework](https://www.serverless.com/).
 
-1. SSH to the API container
-
-    ```
-    $ make ssh-api
-    ```
-
-1. Within the container, deploy with Serverless
-
-    ```
-    $ sls login
-    $ sls deploy --aws-s3-accelerate
-    ```
+```shell
+# If you're using the Dashboard. Otherwise just deploy
+sls login
+sls deploy --aws-s3-accelerate
+```

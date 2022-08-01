@@ -9,11 +9,15 @@ __pycache__/
 .coverage
 htmlcov/
 
+# Vendor
+node_modules/
+
 # Local DynamoDB
 .dynamodb
+
 # Serverless scratch directory
 .serverless
 
-node_modules/
+# Copied dist files
 .env
 serverless.yml

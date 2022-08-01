@@ -9,7 +9,7 @@ service: ''
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.9
   stage: ${opt:stage, self:custom.defaultStage}
   profile: ${self:custom.stage_vars.${self:provider.stage}.aws_profile}
   deploymentBucket:
@@ -100,7 +100,7 @@ functions:
     handler: wsgi_handler.handler
     events:
       - http: ANY /
-      - http: ANY {proxy+}
+      - http: ANY /{proxy+}
     timeout: 10
     memorySize: 1024
     environment:
@@ -113,11 +113,13 @@ functions:
     handler: src/poller.lambda_handler
     events:
       # Every 5th minute past every hour from 13 through 17 (UTC) on every day-of-week from Monday through Friday.
-      - schedule: cron(*/5 13-17 ? * MON-FRI *)
-        enabled: true
+      - schedule:
+          rate: cron(*/5 13-17 ? * MON-FRI *)
+          enabled: true
       # This is useful for testing. Disabled by default
-      - schedule: rate(1 minute)
-        enabled: false
+      - schedule:
+          rate: rate(1 minute)
+          enabled: false
     timeout: 600
     memorySize: 1024
     environment:

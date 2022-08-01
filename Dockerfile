@@ -1,4 +1,4 @@
-FROM python:3.7.4-buster
+FROM python:3.9.13-buster
 
 # Port for Flask
 EXPOSE 5000
@@ -8,17 +8,6 @@ WORKDIR /usr/local/src/reminders
 
 RUN apt-get update && \
       apt-get -y install sudo
-
-# Install Node
-RUN curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && \
-    sudo apt-get install -y nodejs
-
-# Install local NPM dependencies
-COPY package.json .
-RUN npm install
-
-# Install serverless
-RUN npm install -g serverless
 
 # Install core dependencies
 COPY requirements.txt .
