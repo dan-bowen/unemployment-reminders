@@ -12,7 +12,6 @@ services: # containers. same as `docker run`
       - '5000:5000'
     volumes:                          # Optional, same as -v in `docker container run`
       - ./:/usr/local/src/reminders
-      - /usr/local/src/reminders/node_modules/
       - ~/.aws:/root/.aws
     networks:
       - frontend

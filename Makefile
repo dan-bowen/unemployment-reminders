@@ -14,7 +14,10 @@ build: ## (Re)build the containers.
 	@docker-compose build
 
 start: ## Start the containers.
-	@docker-compose up
+	@docker-compose up && sls dynamodb migrate && sls dynamodb seed
+
+seed: ## Seed Dynamo.
+	@sls dynamodb migrate && sls dynamodb seed
 
 stop: ## Stop the containers.
 	@docker-compose down
