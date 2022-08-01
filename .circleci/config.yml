@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/unemployment-reminders
     docker:
-      - image: circleci/python:3.7.4
+      - image: circleci/python:3.9.13
         environment:
           FLASK_ENV: test
           SECRET_KEY: ""
